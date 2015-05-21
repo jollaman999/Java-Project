@@ -35,7 +35,7 @@ public class ChatServer extends JFrame {
     public ChatServer() {
         clients = new HashMap<String, DataOutputStream>();
  
-        // ¿©·¯ ½º·¹µå¿¡¼­ Á¢±ÙÇÒ °ÍÀÌ¹Ç·Î µ¿±âÈ­
+        // ì—¬ëŸ¬ ìŠ¤ë ˆë“œì—ì„œ ì ‘ê·¼í•  ê²ƒì´ë¯€ë¡œ ë™ê¸°í™”
         Collections.synchronizedMap(clients);
         
         JTA_ChatServer.setBackground(Color.WHITE);
@@ -82,13 +82,13 @@ public class ChatServer extends JFrame {
         try {
             Socket socket;
  
-            // ¸®½º³Ê ¼ÒÄÏ »ı¼º
+            // ë¦¬ìŠ¤ë„ˆ ì†Œì¼“ ìƒì„±
             serverSocket = new ServerSocket(7777);
-            JTA_ChatServer.append(getTime() +  " " + "¼­¹ö°¡ ½ÃÀÛµÇ¾ú½À´Ï´Ù." +"\n");
+            JTA_ChatServer.append(getTime() +  " " + "ì„œë²„ê°€ ì‹œì‘ë˜ì—ˆìŠµë‹ˆë‹¤." +"\n");
  
-            // Å¬¶óÀÌ¾ğÆ®¿Í ¿¬°áµÇ¸é
+            // í´ë¼ì´ì–¸íŠ¸ì™€ ì—°ê²°ë˜ë©´
             while (true) {
-                // Åë½Å ¼ÒÄÏÀ» »ı¼ºÇÏ°í ½º·¹µå »ı¼º(¼ÒÄÏÀº 1:1·Î¸¸ ¿¬°áµÈ´Ù)
+                // í†µì‹  ì†Œì¼“ì„ ìƒì„±í•˜ê³  ìŠ¤ë ˆë“œ ìƒì„±(ì†Œì¼“ì€ 1:1ë¡œë§Œ ì—°ê²°ëœë‹¤)
                 socket = serverSocket.accept();
                 ServerReceiver receiver = new ServerReceiver(socket);
                 receiver.start();
@@ -116,48 +116,49 @@ public class ChatServer extends JFrame {
         public void run() {
             String name = "";
             try {
-                // Å¬¶óÀÌ¾ğÆ®°¡ ¼­¹ö¿¡ Á¢¼ÓÇÏ¸é ´ëÈ­¹æ¿¡ ¾Ë¸°´Ù.
-                name = input.readUTF();
-                sendToAll("#" + name + "[" + socket.getInetAddress() + ":"
-                        + socket.getPort() + "]" + "´ÔÀÌ ´ëÈ­¹æ¿¡ Á¢¼ÓÇÏ¿´½À´Ï´Ù.");
+                // í´ë¼ì´ì–¸íŠ¸ê°€ ì„œë²„ì— ì ‘ì†í•˜ë©´ ëŒ€í™”ë°©ì— ì•Œë¦°ë‹¤.
+            	name = input.readUTF();
+               // sendToAll("#" + name + "[" + socket.getInetAddress() + ":"
+                //        + socket.getPort() + "]" + "ë‹˜ì´ ëŒ€í™”ë°©ì— ì ‘ì†í•˜ì˜€ìŠµë‹ˆë‹¤.");
  
                 clients.put(name, output);
                 JTA_ChatServer.append(getTime() +  " " + name + "[" + socket.getInetAddress() + ":"
-                        + socket.getPort() + "]" + "´ÔÀÌ ´ëÈ­¹æ¿¡ Á¢¼ÓÇÏ¿´½À´Ï´Ù." +"\n");
-                JTA_ChatServer.append(getTime() +  " " + "ÇöÀç " + clients.size() + "¸íÀÌ ´ëÈ­¹æ¿¡ Á¢¼Ó ÁßÀÔ´Ï´Ù." +"\n");
-                JSB_ChatServer.setValue(JSB_ChatServer.getMaximum()); // ¸Ç¾Æ·¡·Î ½ºÅ©·Ñ
+                        + socket.getPort() + "]" + "ë‹˜ì´ ëŒ€í™”ë°©ì— ì ‘ì†í•˜ì˜€ìŠµë‹ˆë‹¤." +"\n");
+                
+                
+                //TODO: ë‹¨ì–´ë¥¼ ì°¾ê¸°
+                
+                
+                JTA_ChatServer.append(getTime() +  " " + "í˜„ì¬ " + clients.size() + "ëª…ì´ ëŒ€í™”ë°©ì— ì ‘ì† ì¤‘ì…ë‹ˆë‹¤." +"\n");
+                JSB_ChatServer.setValue(JSB_ChatServer.getMaximum()); // ë§¨ì•„ë˜ë¡œ ìŠ¤í¬ë¡¤
  
-                // ¸Ş¼¼Áö Àü¼Û
+                // ë©”ì„¸ì§€ ì „ì†¡
                 while (input != null) {
-                	sendToAll(input.readUTF());
+                	sendToClient(input.readUTF(), name);
                 }
             } catch (IOException e) {
             } finally {
-                // Á¢¼ÓÀÌ Á¾·áµÇ¸é
+                // ì ‘ì†ì´ ì¢…ë£Œë˜ë©´
                 clients.remove(name);
-                sendToAll("#" + name + "[" + socket.getInetAddress() + ":"
-                        + socket.getPort() + "]" + "´ÔÀÌ ´ëÈ­¹æ¿¡¼­ ³ª°¬½À´Ï´Ù.");
                 JTA_ChatServer.append(getTime() +  " " + name + "[" + socket.getInetAddress() + ":"
-                        + socket.getPort() + "]" + "´ÔÀÌ ´ëÈ­¹æ¿¡¼­ ³ª°¬½À´Ï´Ù." +"\n");
-                JTA_ChatServer.append(getTime() +  " " + "ÇöÀç " + clients.size() + "¸íÀÌ ´ëÈ­¹æ¿¡ Á¢¼Ó ÁßÀÔ´Ï´Ù." +"\n");
-                JSB_ChatServer.setValue(JSB_ChatServer.getMaximum()); // ¸Ç¾Æ·¡·Î ½ºÅ©·Ñ
+                        + socket.getPort() + "]" + "ë‹˜ì´ ëŒ€í™”ë°©ì—ì„œ ë‚˜ê°”ìŠµë‹ˆë‹¤." +"\n");
+                JTA_ChatServer.append(getTime() +  " " + "í˜„ì¬ " + clients.size() + "ëª…ì´ ëŒ€í™”ë°©ì— ì ‘ì† ì¤‘ì…ë‹ˆë‹¤." +"\n");
+                JSB_ChatServer.setValue(JSB_ChatServer.getMaximum()); // ë§¨ì•„ë˜ë¡œ ìŠ¤í¬ë¡¤
             }
         }
  
-        public void sendToAll(String message) {
-            Iterator<String> it = clients.keySet().iterator();
- 
-            while (it.hasNext()) {
-                try {
-                    DataOutputStream dos = clients.get(it.next());
-                    dos.writeUTF(message);
-                } catch (Exception e) {
-                }
+        public void sendToClient(String message, String name) {
+
+            try {
+                DataOutputStream dos = clients.get(name);
+                dos.writeUTF(message);
+                System.out.println(message);
+            } catch (Exception e) {
             }
         }
     }
     
-    // ÇöÀç ½Ã°£ ¾ò¾î¿À±â
+    // í˜„ì¬ ì‹œê°„ ì–»ì–´ì˜¤ê¸°
     static String getTime() {
         SimpleDateFormat f = new SimpleDateFormat("[hh:mm:ss]");
         return f.format(new Date());
