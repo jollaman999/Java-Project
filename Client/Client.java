@@ -601,10 +601,6 @@ public class Client extends JFrame {
 						is_ChatMode = false;
 						file_chatmode.setText("채팅 모드 전환");
 						sp_R_down_Chat_Input.setEditable(false);
-						if (is_Wiki)
-							sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
-						else
-							sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 					}
 					
 					if (is_Wiki) {
@@ -655,10 +651,6 @@ public class Client extends JFrame {
 							is_ChatMode = false;
 							file_chatmode.setText("채팅 모드 전환");
 							sp_R_down_Chat_Input.setEditable(false);
-							if (is_Wiki)
-								sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
-							else
-								sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 						}
 						
 						if (is_Wiki) {
