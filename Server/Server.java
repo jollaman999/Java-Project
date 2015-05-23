@@ -170,7 +170,9 @@ public class Server extends JFrame {
                 receiver.start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+        	JTA_ChatServer.append(getTime() +  " " + "서버 소켓 생성 중 문제가 발생하였습니다!\n");
+        	JTA_ChatServer.append(getTime() +  " " + "7777 번 포트가 사용중이거나 "
+        									+	"실행중인 서버가 있는지 확인하고 서버를 재실행 하여 주십시오.\n"); 
         }
     }
  
