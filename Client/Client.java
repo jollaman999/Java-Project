@@ -64,9 +64,10 @@ public class Client extends JFrame {
 	JMenuItem file_saveas = new JMenuItem("다른 이름으로 저장");
 	JMenuItem file_exit = new JMenuItem("종료");	
 	JSplitPane sp_leftright = new JSplitPane();
-	JSplitPane sp_updown = new JSplitPane();
+	JSplitPane sp_R_updown = new JSplitPane();
+	JSplitPane sp_L_updown = new JSplitPane();
 	JTextField Finder = new JTextField();
-	JTextArea sp_L_commonWord = new JTextArea("");
+	JPanel sp_L_commonWordArea = new JPanel(new GridLayout(10,1,1,1));
 	JPanel sp_L_find_panel = new JPanel(new BorderLayout());
 	JTextArea sp_L_Friendlist = new JTextArea("");
 	JPanel Startup_upper = new JPanel(new GridLayout(3, 1));
@@ -83,8 +84,7 @@ public class Client extends JFrame {
 	JLabel Startup_Label = new JLabel("OpenDIC");
 	Font startup_font = new Font("Broadway", Font.BOLD, 50);
 
-	JPanel sp_L = new JPanel(new GridLayout(2, 1));
-	JScrollPane sp_L_up = new JScrollPane(sp_L_commonWord,
+	JScrollPane sp_L_up = new JScrollPane(sp_L_commonWordArea,
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -105,6 +105,9 @@ public class Client extends JFrame {
 	JRadioButton Dic_select_OpenDIC = new JRadioButton("OpenDIC");
 	JPanel Dic_select_Panel = new JPanel(new FlowLayout());
 	Boolean is_Wiki = false;
+	
+	// wordlist
+	JTextField[] wordlist = new JTextField[10];
 	
 	// Wiki 패널
 	JEditorPane sp_R_up_Wiki_Broswer = new JEditorPane();
@@ -349,9 +352,11 @@ public class Client extends JFrame {
 		main_file.add(file_save);
 		main_file.add(file_saveas);
 		main_file.add(file_exit);
-
-		sp_L.add(sp_L_find_panel, 0);
-		sp_L.add(sp_L_down, 1);
+		
+		sp_L_updown.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		sp_L_updown.setLeftComponent(sp_L_find_panel);
+		sp_L_updown.setRightComponent(sp_L_down);
+		sp_L_updown.setDividerLocation(400);
 
 		sp_L_find_panel.add(sp_L_up, BorderLayout.CENTER);
 		sp_L_find_panel.add(finder_panel, BorderLayout.NORTH);
@@ -362,7 +367,6 @@ public class Client extends JFrame {
 		Dic_select_OpenDIC.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				is_Wiki = false;
 			}
 		});
@@ -370,12 +374,10 @@ public class Client extends JFrame {
 		Dic_select_Wiki.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				is_Wiki = true;
 			}
 		});
-		
-		// TODO
+
 		Dic_select_OpenDIC.setSelected(true);
 		Dic_select_Panel.add(Dic_select_OpenDIC);
 		Dic_select_Panel.add(Dic_select_Wiki);
@@ -389,17 +391,24 @@ public class Client extends JFrame {
 		frame_main.setSize(1280, 720);
 		frame_main.setContentPane(sp_leftright);
 		frame_main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		// TODO: wordlist 초기화
+		for (int i = 0; i < 10; i++) {
+			wordlist[i] = new JTextField("");
+			wordlist[i].setEditable(false);;
+			sp_L_commonWordArea.add(wordlist[i]);
+		}
+		sp_L_commonWordArea.setBackground(new Color(255, 255, 255));
 
-		sp_L_commonWord.setEditable(false);
 		sp_L_Friendlist.setEditable(false);
 
 		sp_R_down.setSize(200, 200);
 
 		sp_R.setLayout(bl_main);
-		sp_updown.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
-		sp_updown.setRightComponent(sp_R_down);
-		sp_updown.setDividerLocation(610);
+		sp_R_updown.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+		sp_R_updown.setRightComponent(sp_R_down);
+		sp_R_updown.setDividerLocation(610);
 
 		sp_R_up_Chat_Show.setEditable(false);
 		sp_R_up_Chat_Show.setLineWrap(true);
@@ -423,9 +432,9 @@ public class Client extends JFrame {
 		});
 
 		sp_R_down_Chat_Input.setLineWrap(true);
-		sp_R.add(sp_updown);
+		sp_R.add(sp_R_updown);
 
-		sp_leftright.setLeftComponent(sp_L);
+		sp_leftright.setLeftComponent(sp_L_updown);
 		sp_leftright.setRightComponent(sp_R);
 		sp_leftright.setDividerLocation(260);
 
@@ -458,11 +467,27 @@ public class Client extends JFrame {
 		public void run() {
 			while (input != null) {
 				try {
-					if (is_ChatMode)
-						sp_R_up_Chat_Show.append(input.readUTF() + "\n");
-					else
-						sp_R_up_OpenDic_Show.setText(input.readUTF());
-					scrollbar.setValue(scrollbar.getMaximum()); // 맨아래로 스크롤
+					if (is_ChatMode) {
+		                  sp_R_up_Chat_Show.append(input.readUTF() + "\n");
+		                  scrollbar.setValue(scrollbar.getMaximum()); // 맨아래로 스크롤
+		               } else {	// TODO: 유사단어 스플릿
+		            	  String read;
+		            	  String[] reads;
+		            	  String[] words;
+		            	  
+		            	  read = input.readUTF();
+		            	  reads = read.split("@");
+		            	  
+		            	  words = reads[1].split("#");
+		            	  
+		            	  for (int i = 0; i < 10; i++)
+		            		  wordlist[i].setText("");
+		            	  
+		            	  for (int i = 0; i < words.length; i++)
+		            		  wordlist[i].setText(words[i]);
+		            	  
+		                  sp_R_up_OpenDic_Show.setText(reads[0]);
+		               }
 				} catch (IOException e) {
 				}
 			}
@@ -509,7 +534,7 @@ public class Client extends JFrame {
 		boolean is_lineadd = false;
 
 		void Dic_Word_Sender() {
-			sp_updown.setDividerLocation(610);
+			sp_R_updown.setDividerLocation(610);
 			msg = Finder.getText();
 			
 			try {
@@ -528,7 +553,7 @@ public class Client extends JFrame {
 			}
 			
 			if (is_Wiki) {
-				sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+				sp_R_updown.setLeftComponent(sp_R_up_Wiki_JSP);
 				try {
 					sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
 							+ URLEncoder.encode(msg, "UTF-8"));
@@ -541,7 +566,7 @@ public class Client extends JFrame {
 					sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
 				}
 			} else {
-				sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+				sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 				sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
 				try {
 					output.writeUTF(msg);
@@ -621,14 +646,14 @@ public class Client extends JFrame {
 				}
 			});
 			
+			// Finder
 			find_button.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					Dic_Word_Sender();
 				}
 			});
-			
-			// TODO: Finder
+
 			Finder.addKeyListener(new KeyListener() {
 				@Override
 				public void keyTyped(KeyEvent arg0) {
@@ -646,7 +671,7 @@ public class Client extends JFrame {
 				}
 			});
 			
-			// TODO: 채팅/사전 전환
+			// 채팅/사전 전환
 			file_chatmode.addActionListener(new ActionListener() {			
 				@Override
 				public void actionPerformed(ActionEvent arg0) {	
@@ -661,13 +686,13 @@ public class Client extends JFrame {
 						}
 						
 						is_ChatMode = false;
-						sp_updown.setDividerLocation(610);
+						sp_R_updown.setDividerLocation(610);
 						file_chatmode.setText("채팅 모드 전환");
 						sp_R_down_Chat_Input.setEditable(false);
 						if (is_Wiki)
-							sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+							sp_R_updown.setLeftComponent(sp_R_up_Wiki_JSP);
 						else
-							sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+							sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 						sp_R_down_Chat_Input.setText("사전 모드로 전환 되었습니다."
 									+ "이제부터 이 곳에는 프로그램 상태가 표시되며 대화를 입력 하실 수 없습니다.");
 					} else {	// 현재 모드가 사전 모드이며 채팅 모드로 전환
@@ -681,10 +706,10 @@ public class Client extends JFrame {
 						}
 						
 						is_ChatMode = true;
-						sp_updown.setDividerLocation(460);
+						sp_R_updown.setDividerLocation(460);
 						file_chatmode.setText("사전 모드 전환");
 						sp_R_down_Chat_Input.setEditable(true);
-						sp_updown.setLeftComponent(sp_R_up_Chat_JSP);
+						sp_R_updown.setLeftComponent(sp_R_up_Chat_JSP);
 						sp_R_down_Chat_Input.setText("");
 						sp_R_up_Chat_Show.append("채팅 모드로 전환 되었습니다."
 										+ "이제부터 아래 대화창에 대화를 입력 하실 수 있습니다.\n");
