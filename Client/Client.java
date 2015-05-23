@@ -742,12 +742,12 @@ public class Client extends JFrame {
 		}
 	}
 	
-    // 현재 시간 얻어오기
-    static String getTime() {
-        SimpleDateFormat f = new SimpleDateFormat("[hh:mm:ss]");
-        return f.format(new Date());
-    }
-	
+	// 현재 시간 얻어오기
+	static String getTime() {
+		SimpleDateFormat f = new SimpleDateFormat("[hh:mm:ss]");
+		return f.format(new Date());
+	}
+
 	public static void main(String[] args) {
 		new Client();
 	}
