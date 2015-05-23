@@ -69,7 +69,7 @@ public class Client extends JFrame {
 	JTextField Finder = new JTextField();
 	JPanel sp_L_commonWordArea = new JPanel(new GridLayout(10,1,1,1));
 	JPanel sp_L_find_panel = new JPanel(new BorderLayout());
-	JTextArea sp_L_Friendlist = new JTextArea("");
+	JPanel sp_L_WordHistoryArea = new JPanel(new GridLayout(10,1,1,1));
 	JPanel Startup_upper = new JPanel(new GridLayout(3, 1));
 	JPanel Startup_upper_1st = new JPanel();
 	JPanel Startup_upper_2st = new JPanel(new FlowLayout());
@@ -88,7 +88,7 @@ public class Client extends JFrame {
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-	JScrollPane sp_L_down = new JScrollPane(sp_L_Friendlist,
+	JScrollPane sp_L_down = new JScrollPane(sp_L_WordHistoryArea,
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -108,13 +108,15 @@ public class Client extends JFrame {
 	
 	// wordlist
 	JTextField[] wordlist = new JTextField[10];
+	JTextField[] wordlist_history = new JTextField[10];
+	String[] wordlist_history_queue = new String[10];
 	
 	// Wiki 패널
 	JEditorPane sp_R_up_Wiki_Broswer = new JEditorPane();
 	JScrollPane sp_R_up_Wiki_JSP = new JScrollPane(sp_R_up_Wiki_Broswer);
 	
 	// OpenDic 패널
-	JTextArea sp_R_up_OpenDic_Show = new JTextArea();
+	JEditorPane sp_R_up_OpenDic_Show = new JEditorPane();
 	JScrollPane sp_R_up_OpenDic_JSP = new JScrollPane(sp_R_up_OpenDic_Show);
 
 	JScrollPane sp_R_up_Chat_JSP = new JScrollPane(sp_R_up_Chat_Show,
@@ -166,7 +168,7 @@ public class Client extends JFrame {
 		login_panel_2st.setOpaque(false);
 		login_panel_3st.setOpaque(false);
 		
-		JTF_ip.setText("서버 IP 또는 도메인 주소를 입력하세요");
+		JTF_ip.setText("buf.jollaman999.com");
 		JTF_name.setText("사용자명을 입력하세요");
 		
 		JTF_ip.addMouseListener(new MouseListener() {
@@ -317,6 +319,9 @@ public class Client extends JFrame {
 		JTF_name.setForeground(Color.ORANGE);
 		button_start.setForeground(Color.DARK_GRAY);
 		
+		JTF_ip.setHorizontalAlignment(JTextField.CENTER);
+		JTF_name.setHorizontalAlignment(JTextField.CENTER);
+		
 		login_panel_1st.add(JTF_ip);
 		login_panel_2st.add(JTF_name);
 		login_panel_3st.add(login_panel_button_area);
@@ -331,19 +336,17 @@ public class Client extends JFrame {
 		Startup_Label.setForeground(Color.WHITE);
 
 		// 컴포넌트 투명화
-		{
-			Startup_upper.setOpaque(false);
-			Startup_down.setOpaque(false);
-			Startup_upper_1st.setOpaque(false);
-			Startup_upper_2st.setOpaque(false);
-			Startup_upper_3st.setOpaque(false);
-			login_panel.setOpaque(false);
-			JTF_ip.setOpaque(false);
-			JTF_name.setOpaque(false);
-			Startup_down.setOpaque(false);
-			login_panel_button_area.setOpaque(false);
-			frame_startup.setVisible(true);
-		}
+		Startup_upper.setOpaque(false);
+		Startup_down.setOpaque(false);
+		Startup_upper_1st.setOpaque(false);
+		Startup_upper_2st.setOpaque(false);
+		Startup_upper_3st.setOpaque(false);
+		login_panel.setOpaque(false);
+		JTF_ip.setOpaque(false);
+		JTF_name.setOpaque(false);
+		Startup_down.setOpaque(false);
+		login_panel_button_area.setOpaque(false);
+		frame_startup.setVisible(true);
 
 		// TODO --------- 메인 프레임 관련 영역 -----------
 		mainMenu_bar.add(main_file);
@@ -356,7 +359,7 @@ public class Client extends JFrame {
 		sp_L_updown.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		sp_L_updown.setLeftComponent(sp_L_find_panel);
 		sp_L_updown.setRightComponent(sp_L_down);
-		sp_L_updown.setDividerLocation(400);
+		sp_L_updown.setDividerLocation(350);
 
 		sp_L_find_panel.add(sp_L_up, BorderLayout.CENTER);
 		sp_L_find_panel.add(finder_panel, BorderLayout.NORTH);
@@ -393,14 +396,31 @@ public class Client extends JFrame {
 		frame_main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		// TODO: wordlist 초기화
-		for (int i = 0; i < 10; i++) {
+		wordlist[0] = new JTextField("====== 유사 단어 ======");
+		wordlist[0].setFont(new Font("", Font.BOLD, 18));
+		wordlist[0].setHorizontalAlignment(JTextField.CENTER);
+		wordlist[0].setEditable(false);
+		sp_L_commonWordArea.add(wordlist[0]);
+		
+		for (int i = 1; i < 10; i++) {
 			wordlist[i] = new JTextField("");
-			wordlist[i].setEditable(false);;
+			wordlist[i].setEditable(false);
 			sp_L_commonWordArea.add(wordlist[i]);
 		}
 		sp_L_commonWordArea.setBackground(new Color(255, 255, 255));
-
-		sp_L_Friendlist.setEditable(false);
+		
+		wordlist_history[0] = new JTextField("====== 검색 기록 ======");
+		wordlist_history[0].setFont(new Font("", Font.BOLD, 18));
+		wordlist_history[0].setHorizontalAlignment(JTextField.CENTER);
+		wordlist_history[0].setEditable(false);
+		sp_L_WordHistoryArea.add(wordlist_history[0]);
+		
+		for (int i = 1; i < 10; i++) {
+			wordlist_history[i] = new JTextField("");
+			wordlist_history[i].setEditable(false);
+			sp_L_WordHistoryArea.add(wordlist_history[i]);
+		}
+		sp_L_WordHistoryArea.setBackground(new Color(255, 255, 255));
 
 		sp_R_down.setSize(200, 200);
 
@@ -483,17 +503,19 @@ public class Client extends JFrame {
 		            	  if (read.matches(".*님이 OpenDic.*"))
 		            		  continue;
 		            	  
+		            	  if (!read.matches(".*#.*"))
+		            		  continue;
+		            	  
 		            	  reads = read.split("@");
+		            	  sp_R_up_OpenDic_Show.setText(reads[0]);
 		            	  
 		            	  words = reads[1].split("#");
 		            	  
-		            	  for (int i = 0; i < wordlist.length; i++)
+		            	  for (int i = 1; i < wordlist.length; i++)
 		            		  wordlist[i].setText("");
 		            	  
 		            	  for (int i = 1; i < words.length; i++)
-		            		  wordlist[i - 1].setText(words[i]);
-		            	  
-		                  sp_R_up_OpenDic_Show.setText(reads[0]);
+		            		  wordlist[i].setText(words[i]);
 		               }
 				} catch (IOException e) {
 				}
@@ -542,6 +564,7 @@ public class Client extends JFrame {
 
 		void Dic_Word_Sender() {
 			sp_R_updown.setDividerLocation(610);
+			Finder.setText(msg);
 			
 			try {
 				output.writeUTF("DIC_MODE");
@@ -559,7 +582,15 @@ public class Client extends JFrame {
 			}
 			
 			if (is_Wiki) {
+				sp_R_up_Wiki_Broswer.setText("해당 검색어는 Wiki 에 존재하지 않는 단어 입니다.");
 				sp_R_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+				
+				for (int i = 1; i < wordlist.length; i++)
+					wordlist[i].setText("");
+				
+				wordlist[1].setText("Wiki 에서는 유사 단어 기능이");
+				wordlist[2].setText("제공되지 않습니다.");
+				
 				try {
 					sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
 							+ URLEncoder.encode(msg, "UTF-8"));
@@ -572,6 +603,7 @@ public class Client extends JFrame {
 					sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
 				}
 			} else {
+				sp_R_up_OpenDic_Show.setText("해당 검색어는 OpenDic 에 존재하지 않는 단어 입니다.");				
 				sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 				sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
 				try {
@@ -582,6 +614,23 @@ public class Client extends JFrame {
 					JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
 				}
 			}
+		}
+		
+		// TODO: 단어 검색 큐
+		void wordlist_history_allocator() {
+			for (int i = 2; i < wordlist_history_queue.length; i++) {
+				if (msg.equals(wordlist_history_queue[i - 1]))
+					break;
+				wordlist_history_queue[i] = wordlist_history[i - 1].getText();
+			}
+
+			for (int i = 1; i < wordlist_history_queue.length; i++) {
+				if (msg.equals(wordlist_history_queue[i]))
+					break;
+				wordlist_history[i].setText(wordlist_history_queue[i]);
+			}
+			
+			wordlist_history[1].setText(msg);
 		}
 
 		public ClientSender(Socket socket) {
@@ -603,6 +652,11 @@ public class Client extends JFrame {
 			} catch (Exception e) {
 			}
 			
+			for (int i = 1; i < wordlist_history_queue.length; i++) {
+				wordlist_history_queue[i] = "";
+				wordlist_history[i].setText(wordlist_history_queue[i]);
+			}
+			
 			sp_R_down_Chat_Input.addKeyListener(new KeyListener() {
 				@Override
 				public void keyPressed(KeyEvent arg0) {
@@ -615,7 +669,7 @@ public class Client extends JFrame {
 					}
 
 					// 메세지 창에서 엔터를 치면 메세지를 전송
-					if (arg0.getKeyCode() == KeyEvent.VK_ENTER && !is_lineadd) {						
+					if (arg0.getKeyCode() == KeyEvent.VK_ENTER && !is_lineadd) {
 						msg = sp_R_down_Chat_Input.getText();
 						
 						if (msg.equals("exit")) {
@@ -658,6 +712,7 @@ public class Client extends JFrame {
 				public void actionPerformed(ActionEvent arg0) {
 					msg = Finder.getText();
 					Dic_Word_Sender();
+					wordlist_history_allocator();
 				}
 			});
 
@@ -675,35 +730,12 @@ public class Client extends JFrame {
 					if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 						msg = Finder.getText();
 						Dic_Word_Sender();
+						wordlist_history_allocator();
 					}
 				}
 			});
 			
-			// TODO: wordlist
-			wordlist[0].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist[0].getText();
-					Dic_Word_Sender();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
+			// TODO: wordlist			
 			wordlist[1].addMouseListener(new MouseListener() {				
 				@Override
 				public void mouseReleased(MouseEvent e) {
@@ -713,6 +745,7 @@ public class Client extends JFrame {
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist[1].getText();
 					Dic_Word_Sender();
+					wordlist_history_allocator();
 				}
 				
 				@Override
@@ -737,6 +770,7 @@ public class Client extends JFrame {
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist[2].getText();
 					Dic_Word_Sender();
+					wordlist_history_allocator();
 				}
 				
 				@Override
@@ -761,6 +795,7 @@ public class Client extends JFrame {
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist[3].getText();
 					Dic_Word_Sender();
+					wordlist_history_allocator();
 				}
 				
 				@Override
@@ -785,6 +820,7 @@ public class Client extends JFrame {
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist[4].getText();
 					Dic_Word_Sender();
+					wordlist_history_allocator();
 				}
 				
 				@Override
@@ -809,6 +845,7 @@ public class Client extends JFrame {
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist[5].getText();
 					Dic_Word_Sender();
+					wordlist_history_allocator();
 				}
 				
 				@Override
@@ -833,6 +870,7 @@ public class Client extends JFrame {
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist[6].getText();
 					Dic_Word_Sender();
+					wordlist_history_allocator();
 				}
 				
 				@Override
@@ -857,6 +895,7 @@ public class Client extends JFrame {
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist[7].getText();
 					Dic_Word_Sender();
+					wordlist_history_allocator();
 				}
 				
 				@Override
@@ -881,6 +920,7 @@ public class Client extends JFrame {
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist[8].getText();
 					Dic_Word_Sender();
+					wordlist_history_allocator();
 				}
 				
 				@Override
@@ -905,6 +945,233 @@ public class Client extends JFrame {
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist[9].getText();
 					Dic_Word_Sender();
+					wordlist_history_allocator();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			// TODO: wordlist_history			
+			wordlist_history[1].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist_history[1].getText();
+					Dic_Word_Sender();
+					wordlist_history_allocator();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist_history[2].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist_history[2].getText();
+					Dic_Word_Sender();
+					wordlist_history_allocator();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist_history[3].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist_history[3].getText();
+					Dic_Word_Sender();
+					wordlist_history_allocator();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist_history[4].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist_history[4].getText();
+					Dic_Word_Sender();
+					wordlist_history_allocator();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist_history[5].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist_history[5].getText();
+					Dic_Word_Sender();
+					wordlist_history_allocator();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist_history[6].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist_history[6].getText();
+					Dic_Word_Sender();
+					wordlist_history_allocator();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist_history[7].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist_history[7].getText();
+					Dic_Word_Sender();
+					wordlist_history_allocator();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist_history[8].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist_history[8].getText();
+					Dic_Word_Sender();
+					wordlist_history_allocator();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist_history[9].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist_history[9].getText();
+					Dic_Word_Sender();
+					wordlist_history_allocator();
 				}
 				
 				@Override
