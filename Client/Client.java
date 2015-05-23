@@ -600,11 +600,13 @@ public class Client extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					sp_updown.setDividerLocation(610);
 					
+					msg = sp_R_down_Chat_Input.getText();
+					
 					if (is_Wiki) {
 						sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
 						try {
 							sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
-									+ URLEncoder.encode(Finder.getText(), "UTF-8"));
+									+ URLEncoder.encode(msg, "UTF-8"));
 							sp_R_down_Chat_Input.setText("Wiki 로 부터 사전 검색을 합니다.");
 						} catch (UnsupportedEncodingException e1) {
 							sp_R_down_Chat_Input.setText("Wiki 페이지 로드 중 주소 형식이 잘못 되었습니다!");
@@ -616,6 +618,13 @@ public class Client extends JFrame {
 					} else {
 						sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 						sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
+						try {
+							output.writeUTF(msg);
+						} catch (IOException e1) {
+							frame_startup.setVisible(true);
+							frame_main.setVisible(false);
+							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+						}
 					}
 				}
 			});
@@ -635,6 +644,8 @@ public class Client extends JFrame {
 					if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 						sp_updown.setDividerLocation(610);
 						
+						msg = sp_R_down_Chat_Input.getText();
+						
 						if (is_Wiki) {
 							sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
 							
@@ -652,6 +663,13 @@ public class Client extends JFrame {
 						} else {
 							sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 							sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
+							try {
+								output.writeUTF(msg);
+							} catch (IOException e1) {
+								frame_startup.setVisible(true);
+								frame_main.setVisible(false);
+								JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+							}
 						}
 					}
 				}
