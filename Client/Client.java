@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Client extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -88,6 +90,7 @@ public class Client extends JFrame {
 	// 채팅 패널
 	JTextArea sp_R_up_Chat_Show = new JTextArea("");
 	JTextArea sp_R_down_Chat_Input = new JTextArea("");
+	Boolean is_ChatMode = false;
 	
 	// 사전 선택
 	ButtonGroup Dic_select_btgroup = new ButtonGroup();
@@ -104,7 +107,7 @@ public class Client extends JFrame {
 	JTextArea sp_R_up_OpenDic_Show = new JTextArea();
 	JScrollPane sp_R_up_OpenDic_JSP = new JScrollPane(sp_R_up_OpenDic_Show);
 
-	JScrollPane sp_R_up = new JScrollPane(sp_R_up_Chat_Show,
+	JScrollPane sp_R_up_Chat_JSP = new JScrollPane(sp_R_up_Chat_Show,
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 	JScrollPane sp_R_down = new JScrollPane(sp_R_down_Chat_Input,
@@ -337,16 +340,44 @@ public class Client extends JFrame {
 		JMenuBar mainMenu_bar = new JMenuBar();
 
 		JMenu main_file = new JMenu("파일");
+		JMenuItem file_chatmode = new JMenuItem("채팅 모드 전환");
 		JMenuItem file_open = new JMenuItem("불러오기");
 		JMenuItem file_save = new JMenuItem("저장하기");
 		JMenuItem file_saveas = new JMenuItem("다른 이름으로 저장");
 		JMenuItem file_exit = new JMenuItem("종료");
 
 		mainMenu_bar.add(main_file);
+		main_file.add(file_chatmode);
 		main_file.add(file_open);
 		main_file.add(file_save);
 		main_file.add(file_saveas);
 		main_file.add(file_exit);
+		
+		// TODO: 채팅/사전 전환
+		file_chatmode.addActionListener(new ActionListener() {			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {	
+				if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
+					is_ChatMode = false;
+					sp_updown.setDividerLocation(610);
+					file_chatmode.setText("채팅 모드 전환");
+					sp_R_down_Chat_Input.setEditable(false);
+					if (is_Wiki)
+						sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+					else
+						sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+					sp_R_down_Chat_Input.setText("사전 모드로 전환 되었습니다. 이제부터 이 곳에는 프로그램 상태가 표시되며 대화를 입력 하실 수 없습니다.");
+				} else {	// 현재 모드가 사전 모드이며 채팅 모드로 전환
+					is_ChatMode = true;
+					sp_updown.setDividerLocation(460);
+					file_chatmode.setText("사전 모드 전환");
+					sp_R_down_Chat_Input.setEditable(true);
+					sp_updown.setLeftComponent(sp_R_up_Chat_JSP);
+					sp_R_down_Chat_Input.setText("");
+					sp_R_up_Chat_Show.append("채팅 모드로 전환 되었습니다. 이제부터 아래 대화창에 대화를 입력 하실 수 있습니다.\n");
+				}
+			}
+		});
 
 		sp_L.add(sp_L_find_panel, 0);
 		sp_L.add(sp_L_down, 1);
@@ -458,18 +489,18 @@ public class Client extends JFrame {
 
 		sp_L_commonWord.setEditable(false);
 		sp_L_Friendlist.setEditable(false);
-		sp_R_up.setSize(200, 200);
 
 		sp_R_down.setSize(200, 200);
 
 		sp_R.setLayout(bl_main);
 		sp_updown.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		sp_updown.setLeftComponent(sp_R_up);
+		sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 		sp_updown.setRightComponent(sp_R_down);
-		sp_updown.setDividerLocation(460);
+		sp_updown.setDividerLocation(610);
 
 		sp_R_up_Chat_Show.setEditable(false);
 		sp_R_up_Chat_Show.setLineWrap(true);
+		sp_R_down_Chat_Input.setEditable(false);
 		sp_R_down_Chat_Input.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent arg0) {
@@ -502,7 +533,7 @@ public class Client extends JFrame {
 	class ClientReceiver extends Thread {
 		Socket socket;
 		DataInputStream input;
-		JScrollBar scrollbar = sp_R_up.getVerticalScrollBar();
+		JScrollBar scrollbar = sp_R_up_Chat_JSP.getVerticalScrollBar();
 		JScrollBar scrollbar_L_U = sp_L_up.getVerticalScrollBar();
 		JScrollBar scrollbar_L_D = sp_L_down.getVerticalScrollBar();
 
@@ -565,7 +596,7 @@ public class Client extends JFrame {
 		Socket socket;
 		DataOutputStream output;
 		String msg = "";
-		JScrollBar scrollbar = sp_R_up.getVerticalScrollBar();
+		JScrollBar scrollbar = sp_R_up_Chat_JSP.getVerticalScrollBar();
 		boolean is_lineadd = false;
 
 		public ClientSender(Socket socket) {
@@ -602,7 +633,7 @@ public class Client extends JFrame {
 				if (msg.equals("exit"))
 					System.exit(0);
 				try {
-					output.writeUTF("[" + chat_name + "] " + msg);
+					output.writeUTF(getTime() + " [" + chat_name + "] " + msg);
 				} catch (IOException e) {
 					frame_startup.setVisible(true);
 					frame_main.setVisible(false);
@@ -626,6 +657,12 @@ public class Client extends JFrame {
 		public void keyTyped(KeyEvent arg0) {
 		}
 	}
+	
+    // 현재 시간 얻어오기
+    static String getTime() {
+        SimpleDateFormat f = new SimpleDateFormat("[hh:mm:ss]");
+        return f.format(new Date());
+    }
 	
 	public static void main(String[] args) {
 		new Client();
