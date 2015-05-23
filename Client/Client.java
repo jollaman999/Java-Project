@@ -445,8 +445,11 @@ public class Client extends JFrame {
 			try {
 				if (socket != null)
 					input = new DataInputStream(socket.getInputStream());
-				else
-					sp_R_down_Chat_Input.setText("서버 연결에 실패하였습니다!");
+				else {
+					frame_startup.setVisible(true);
+					frame_main.setVisible(false);
+					JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+				}
 			} catch (IOException e) {
 			}
 		}
@@ -516,8 +519,11 @@ public class Client extends JFrame {
 					sp_R_down_Chat_Input.setText("");
 
 					is_connected = true;
-				} else
-					sp_R_down_Chat_Input.setText("서버에 연결해 주십시오!");
+				} else {
+					frame_startup.setVisible(true);
+					frame_main.setVisible(false);
+					JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+				}
 			} catch (Exception e) {
 			}
 			
@@ -579,7 +585,9 @@ public class Client extends JFrame {
 					try {
 						output.writeUTF("DIC_MODE");
 					} catch (IOException e) {
-						sp_R_down_Chat_Input.setText("사전 사용 모드를 서버로 알리는 도중 문제가 발생하였습니다!");
+						frame_startup.setVisible(true);
+						frame_main.setVisible(false);
+						JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
 						return;
 					}
 					
@@ -635,7 +643,9 @@ public class Client extends JFrame {
 						try {
 							output.writeUTF("DIC_MODE");
 						} catch (IOException e) {
-							sp_R_down_Chat_Input.setText("사전 사용 모드를 서버로 알리는 도중 문제가 발생하였습니다!");
+							frame_startup.setVisible(true);
+							frame_main.setVisible(false);
+							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
 							return;
 						}
 						
@@ -682,7 +692,9 @@ public class Client extends JFrame {
 						try {
 							output.writeUTF("DIC_MODE");
 						} catch (IOException e) {
-							sp_R_down_Chat_Input.setText("사전 사용 모드를 서버로 알리는 도중 문제가 발생하였습니다!");
+							frame_startup.setVisible(true);
+							frame_main.setVisible(false);
+							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
 							return;
 						}
 						
@@ -694,12 +706,15 @@ public class Client extends JFrame {
 							sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
 						else
 							sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
-						sp_R_down_Chat_Input.setText("사전 모드로 전환 되었습니다. 이제부터 이 곳에는 프로그램 상태가 표시되며 대화를 입력 하실 수 없습니다.");
+						sp_R_down_Chat_Input.setText("사전 모드로 전환 되었습니다."
+									+ "이제부터 이 곳에는 프로그램 상태가 표시되며 대화를 입력 하실 수 없습니다.");
 					} else {	// 현재 모드가 사전 모드이며 채팅 모드로 전환
 						try {
 							output.writeUTF("CHAT_MODE");
 						} catch (IOException e) {
-							sp_R_down_Chat_Input.setText("채팅 사용 모드를 서버로 알리는 도중 문제가 발생하였습니다!");
+							frame_startup.setVisible(true);
+							frame_main.setVisible(false);
+							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
 							return;
 						}
 						
@@ -709,7 +724,8 @@ public class Client extends JFrame {
 						sp_R_down_Chat_Input.setEditable(true);
 						sp_updown.setLeftComponent(sp_R_up_Chat_JSP);
 						sp_R_down_Chat_Input.setText("");
-						sp_R_up_Chat_Show.append("채팅 모드로 전환 되었습니다. 이제부터 아래 대화창에 대화를 입력 하실 수 있습니다.\n");
+						sp_R_up_Chat_Show.append("채팅 모드로 전환 되었습니다."
+										+ "이제부터 아래 대화창에 대화를 입력 하실 수 있습니다.\n");
 					}
 				}
 			});
