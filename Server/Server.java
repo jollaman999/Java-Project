@@ -33,41 +33,53 @@ public class Server extends JFrame {
     		JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     JScrollBar JSB_ChatServer  = JSP_ChatServer.getVerticalScrollBar();
     
+    static Boolean is_ChatMode = false;
+    
     /*
      * ==== 서버 파일 예제 ====
      * 수박/붉고 물이 많으며 달고 맛있음.
      * 사과/속살이 노란빛이 돌며 달고 맛있음.
      * 바나나/길고 달고 맛있음.
-     */
-    
+     */    
     static File Dic_file = new File("./dictionary.txt");
     static FileReader Dic_filereader = null;
-    static Boolean is_ChatMode = false;
-    static Boolean Dic_File_NotFound = false;
+    static BufferedReader Dic_bufferedreader = null;
+    static Boolean Dic_File_Error_Occured = false;
     
     static Vector<String> Dic_data = new Vector<String>();
- 
-    public static void main(String[] args) {
+    
+    static void Dic_File_Opener () {
     	String read;
     	String[] reads;
     	
     	try {
     		Dic_filereader = new FileReader(Dic_file);
-        	System.out.println("file opened");
+        	Dic_File_Error_Occured = false;
 		} catch (FileNotFoundException e1) {
-			Dic_File_NotFound = true;
+			Dic_File_Error_Occured = true;
 			JTA_ChatServer.append(getTime() +  " 사전 파일을 불러오는데 실패하였습니다!\n");
+			JTA_ChatServer.append(getTime() +  " " + "사전 파일이 올바른 위치에 저장되어 있고"
+												+ " 파일명이 dictionary.txt 가 맞는지"
+												+ " 확인하고 서버를 재실행 하여 주십시오." +"\n");
 			return;
 		}
-    	BufferedReader Dic_bufferedreader =
-    			new BufferedReader(Dic_filereader);
+    	
+    	Dic_bufferedreader = new BufferedReader(Dic_filereader);
     	
     	try {
 			while ((read = Dic_bufferedreader.readLine()) != null) {
 				reads = read.split("/");
 				
 				if (reads.length % 2 != 0) {
-					JTA_ChatServer.append(getTime() +  " 사전 파일에 문제가 있습니다!");
+					JTA_ChatServer.append(getTime() +  " 사전 파일에 문제가 있습니다!\n");
+					JTA_ChatServer.append(getTime() +  " " + "사전 파일이 정상적으로 작성되어 있는지"
+														+ " 확인하고 서버를 재실행 하여 주십시오." +"\n");
+					JTA_ChatServer.append("\n==== 사전 파일 예제 ====\n"
+										+ "[단어]/[뜻]	(구분자 : /)\n"
+										+ "수박/붉고 물이 많으며 달고 맛있음.\n"
+										+ "사과/속살이 노란빛이 돌며 달고 맛있음.\n"
+									    + "바나나/길고 달고 맛있음.");
+					Dic_File_Error_Occured = true;
 					Dic_bufferedreader.close();
 					return;
 				}
@@ -76,8 +88,15 @@ public class Server extends JFrame {
 				Dic_data.addElement(reads[1]);
 			}
 		} catch (IOException e1) {
-			JTA_ChatServer.append(getTime() +  " 사전 파일을 읽는 도중 문제가 발생하였습니다!");
+			JTA_ChatServer.append(getTime() +  " 사전 파일을 읽는 도중 문제가 발생하였습니다!\n");
+			JTA_ChatServer.append(getTime() +  " " + "사전 파일이 다른 곳에서 사용중인지"
+												+ " 확인하고 서버를 재실행 하여 주십시오." +"\n");
+			Dic_File_Error_Occured = true;
 		}
+    }
+ 
+    public static void main(String[] args) {
+    	Dic_File_Opener();
     	
         new Server().start();
         
@@ -139,7 +158,9 @@ public class Server extends JFrame {
  
             // 리스너 소켓 생성
             serverSocket = new ServerSocket(7777);
-            JTA_ChatServer.append(getTime() +  " " + "서버가 시작되었습니다." +"\n");
+            
+            if (!Dic_File_Error_Occured)
+            	JTA_ChatServer.append(getTime() +  " " + "서버가 시작되었습니다." +"\n");
  
             // 클라이언트와 연결되면
             while (true) {
@@ -172,15 +193,16 @@ public class Server extends JFrame {
             String name = "";
             String message = new String();
             try {
-                // 클라이언트가 서버에 접속하면 대화방에 알린다.
+                // 클라이언트가 서버에 접속하면 OpenDic 에 알린다.
                 name = input.readUTF();
                 sendToAll("#" + name + "[" + socket.getInetAddress() + ":"
-                        + socket.getPort() + "]" + "님이 대화방에 접속하였습니다.");
+                        + socket.getPort() + "]" + "님이 OpenDic 에 접속하였습니다.");
  
                 clients.put(name, output);
                 JTA_ChatServer.append(getTime() +  " " + name + "[" + socket.getInetAddress() + ":"
-                        + socket.getPort() + "]" + "님이 대화방에 접속하였습니다." +"\n");
-                JTA_ChatServer.append(getTime() +  " " + "현재 " + clients.size() + "명이 대화방에 접속 중입니다." +"\n");
+                        + socket.getPort() + "]" + "님이 OpenDic 에 접속하였습니다." +"\n");
+                JTA_ChatServer.append(getTime() +  " "
+                        				+ "현재 " + clients.size() + "명이 OpenDic 에 접속 중입니다." +"\n");
                 JSB_ChatServer.setValue(JSB_ChatServer.getMaximum()); // 맨아래로 스크롤
                 
                 // 메세지 전송
@@ -204,10 +226,11 @@ public class Server extends JFrame {
                 // 접속이 종료되면
                 clients.remove(name);
                 sendToAll("#" + name + "[" + socket.getInetAddress() + ":"
-                        + socket.getPort() + "]" + "님이 대화방에서 나갔습니다.");
+                        + socket.getPort() + "]" + "님이 OpenDic 에서 나갔습니다.");
                 JTA_ChatServer.append(getTime() +  " " + name + "[" + socket.getInetAddress() + ":"
-                        + socket.getPort() + "]" + "님이 대화방에서 나갔습니다." +"\n");
-                JTA_ChatServer.append(getTime() +  " " + "현재 " + clients.size() + "명이 대화방에 접속 중입니다." +"\n");
+                        + socket.getPort() + "]" + "님이 OpenDic 에서 나갔습니다." +"\n");
+                JTA_ChatServer.append(getTime() +  " "
+                        				+ "현재 " + clients.size() + "명이 OpenDic 에 접속 중입니다." +"\n");
                 JSB_ChatServer.setValue(JSB_ChatServer.getMaximum()); // 맨아래로 스크롤
             }
         }
@@ -228,7 +251,7 @@ public class Server extends JFrame {
             try {
             	DataOutputStream dos = clients.get(name);
             	
-                if (Dic_File_NotFound) {
+                if (Dic_File_Error_Occured) {
     				try {
     					dos.writeUTF("서버로 부터 사전 파일을 불러오는데 실패하였습니다!\n");
     				} catch (IOException e) {
