@@ -592,7 +592,7 @@ public class Client extends JFrame {
 	}
 
 	// 채팅 클라이언트 센더
-	class ClientSender implements KeyListener {
+	class ClientSender {
 		Socket socket;
 		DataOutputStream output;
 		String msg = "";
@@ -614,47 +614,47 @@ public class Client extends JFrame {
 					sp_R_down_Chat_Input.setText("서버에 연결해 주십시오!");
 			} catch (Exception e) {
 			}
-			sp_R_down_Chat_Input.addKeyListener(this);
-		}
+			sp_R_down_Chat_Input.addKeyListener(new KeyListener() {
+				@Override
+				public void keyPressed(KeyEvent arg0) {
+					// 줄바꿈: Shift + Enter
+					if (arg0.getKeyCode() == KeyEvent.VK_SHIFT) {
+						is_lineadd = true;
+					}
+					if (arg0.getKeyCode() == KeyEvent.VK_ENTER && is_lineadd) {
+						sp_R_down_Chat_Input.append("\n");
+					}
 
-		@Override
-		public void keyPressed(KeyEvent arg0) {
-			// 줄바꿈: Shift + Enter
-			if (arg0.getKeyCode() == KeyEvent.VK_SHIFT) {
-				is_lineadd = true;
-			}
-			if (arg0.getKeyCode() == KeyEvent.VK_ENTER && is_lineadd) {
-				sp_R_down_Chat_Input.append("\n");
-			}
-
-			// 메세지 창에서 엔터를 치면 메세지를 전송
-			if (arg0.getKeyCode() == KeyEvent.VK_ENTER && !is_lineadd) {
-				msg = sp_R_down_Chat_Input.getText();
-				if (msg.equals("exit"))
-					System.exit(0);
-				try {
-					output.writeUTF(getTime() + " [" + chat_name + "] " + msg);
-				} catch (IOException e) {
-					frame_startup.setVisible(true);
-					frame_main.setVisible(false);
-					JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+					// 메세지 창에서 엔터를 치면 메세지를 전송
+					if (arg0.getKeyCode() == KeyEvent.VK_ENTER && !is_lineadd) {
+						msg = sp_R_down_Chat_Input.getText();
+						if (msg.equals("exit"))
+							System.exit(0);
+						try {
+							output.writeUTF(getTime() + " [" + chat_name + "] " + msg);
+						} catch (IOException e) {
+							frame_startup.setVisible(true);
+							frame_main.setVisible(false);
+							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+						}
+						sp_R_down_Chat_Input.setText(""); // 입력 창 비움
+						scrollbar.setValue(scrollbar.getMaximum()); // 맨아래로 스크롤
+					}
 				}
-				sp_R_down_Chat_Input.setText(""); // 입력 창 비움
-				scrollbar.setValue(scrollbar.getMaximum()); // 맨아래로 스크롤
-			}
-		}
 
-		@Override
-		public void keyReleased(KeyEvent arg0) {
-			// 입력창에 엔터를 치면서 생기는 빈 줄 제거
-			if (arg0.getKeyCode() == KeyEvent.VK_ENTER && !is_lineadd)
-				sp_R_down_Chat_Input.setText("");
-			else if (arg0.getKeyCode() == KeyEvent.VK_SHIFT)
-				is_lineadd = false;
-		}
+				@Override
+				public void keyReleased(KeyEvent arg0) {
+					// 입력창에 엔터를 치면서 생기는 빈 줄 제거
+					if (arg0.getKeyCode() == KeyEvent.VK_ENTER && !is_lineadd)
+						sp_R_down_Chat_Input.setText("");
+					else if (arg0.getKeyCode() == KeyEvent.VK_SHIFT)
+						is_lineadd = false;
+				}
 
-		@Override
-		public void keyTyped(KeyEvent arg0) {
+				@Override
+				public void keyTyped(KeyEvent arg0) {
+				}
+			});
 		}
 	}
 	
