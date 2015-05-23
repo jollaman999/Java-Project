@@ -15,12 +15,16 @@ import java.util.Date;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
+import simmetrics.JaroWinkler;
  
 public class Server extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -243,6 +247,7 @@ public class Server extends JFrame {
             while (it.hasNext()) {
                 try {
                     DataOutputStream dos = clients.get(it.next());
+                    
                     dos.writeUTF(message);
                 } catch (Exception e) {
                 }
@@ -260,17 +265,49 @@ public class Server extends JFrame {
     				}
                 } else {
                 	int search_index = Dic_data.indexOf(message);
+                	Double similarity = (double) 0.0f;
+                	StringBuffer sb_to_client = new StringBuffer("");
+                	Map similarity_map = new HashMap();
+                	
+                	if (message.equals("DIC_MODE"))
+                		return;
                 	
                 	System.out.println(message);
                 	
-                	if (search_index == -1)
-                		dos.writeUTF("해당 단어는 OpenDic 에 존재하지 않는 단어입니다.");
-                	else
-                		dos.writeUTF(Dic_data.get(search_index + 1));
+                	if (search_index == -1) {
+                		sb_to_client.append("해당 단어는 OpenDic 에 존재하지 않는 단어입니다.");
+                		sb_to_client.append("@");
+                	} else {
+                		sb_to_client.append(Dic_data.get(search_index + 1));
+                		sb_to_client.append("@");
+                	}
+                	
+                	for (int i = 0; i < Dic_data.size(); i += 2) {
+                		similarity = compareStrings(Dic_data.get(i), message);
+                		if (similarity > 0)
+                			similarity_map.put(similarity.toString(), Dic_data.get(i));
+                	}
+                	
+                	TreeMap similarity_treemap = new TreeMap(similarity_map);
+                	Iterator iteratorKey = similarity_treemap.descendingKeySet().iterator();
+                	
+                	while(iteratorKey.hasNext()){
+                		   String key = (String) iteratorKey.next();
+                		   System.out.println(key+","+similarity_treemap.get(key));
+                		   sb_to_client.append(similarity_treemap.get(key) + "#");
+                	}
+                	dos.writeUTF(sb_to_client.toString());
                 }
             } catch (Exception e) {
             }
         }
+    }
+    
+    // simmetrics
+    // http://sourceforge.net/projects/simmetrics/
+    public double compareStrings(String stringA, String stringB) {
+        JaroWinkler algorithm = new JaroWinkler();
+        return algorithm.getSimilarity(stringA, stringB);
     }
     
     // 현재 시간 얻어오기
