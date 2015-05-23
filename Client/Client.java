@@ -508,6 +508,51 @@ public class Client extends JFrame {
 		JScrollBar scrollbar = sp_R_up_Chat_JSP.getVerticalScrollBar();
 		boolean is_lineadd = false;
 
+		void Dic_Word_Sender() {
+			sp_updown.setDividerLocation(610);
+			msg = Finder.getText();
+			
+			try {
+				output.writeUTF("DIC_MODE");
+			} catch (IOException e) {
+				frame_startup.setVisible(true);
+				frame_main.setVisible(false);
+				JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+				return;
+			}
+			
+			if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
+				is_ChatMode = false;
+				file_chatmode.setText("채팅 모드 전환");
+				sp_R_down_Chat_Input.setEditable(false);
+			}
+			
+			if (is_Wiki) {
+				sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+				try {
+					sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
+							+ URLEncoder.encode(msg, "UTF-8"));
+					sp_R_down_Chat_Input.setText("Wiki 로 부터 사전 검색을 합니다.");
+				} catch (UnsupportedEncodingException e1) {
+					sp_R_down_Chat_Input.setText("Wiki 페이지 로드 중 주소 형식이 잘못 되었습니다!");
+				} catch (FileNotFoundException e1) {
+					sp_R_down_Chat_Input.setText("해당 검색어는 Wiki 에 존재하지 않는 단어 입니다.");
+				} catch (IOException e1) {
+					sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
+				}
+			} else {
+				sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+				sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
+				try {
+					output.writeUTF(msg);
+				} catch (IOException e1) {
+					frame_startup.setVisible(true);
+					frame_main.setVisible(false);
+					JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+				}
+			}
+		}
+		
 		public ClientSender(Socket socket) {
 			this.socket = socket;
 			try {
@@ -579,48 +624,7 @@ public class Client extends JFrame {
 			find_button.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					sp_updown.setDividerLocation(610);
-					msg = Finder.getText();
-					
-					try {
-						output.writeUTF("DIC_MODE");
-					} catch (IOException e) {
-						frame_startup.setVisible(true);
-						frame_main.setVisible(false);
-						JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
-						return;
-					}
-					
-					if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
-						is_ChatMode = false;
-						file_chatmode.setText("채팅 모드 전환");
-						sp_R_down_Chat_Input.setEditable(false);
-					}
-					
-					if (is_Wiki) {
-						sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
-						try {
-							sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
-									+ URLEncoder.encode(msg, "UTF-8"));
-							sp_R_down_Chat_Input.setText("Wiki 로 부터 사전 검색을 합니다.");
-						} catch (UnsupportedEncodingException e1) {
-							sp_R_down_Chat_Input.setText("Wiki 페이지 로드 중 주소 형식이 잘못 되었습니다!");
-						} catch (FileNotFoundException e1) {
-							sp_R_down_Chat_Input.setText("해당 검색어는 Wiki 에 존재하지 않는 단어 입니다.");
-						} catch (IOException e1) {
-							sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
-						}
-					} else {
-						sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
-						sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
-						try {
-							output.writeUTF(msg);
-						} catch (IOException e1) {
-							frame_startup.setVisible(true);
-							frame_main.setVisible(false);
-							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
-						}
-					}
+					Dic_Word_Sender();
 				}
 			});
 			
@@ -637,49 +641,7 @@ public class Client extends JFrame {
 				@Override
 				public void keyPressed(KeyEvent arg0) {
 					if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-						sp_updown.setDividerLocation(610);
-						msg = Finder.getText();
-						
-						try {
-							output.writeUTF("DIC_MODE");
-						} catch (IOException e) {
-							frame_startup.setVisible(true);
-							frame_main.setVisible(false);
-							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
-							return;
-						}
-						
-						if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
-							is_ChatMode = false;
-							file_chatmode.setText("채팅 모드 전환");
-							sp_R_down_Chat_Input.setEditable(false);
-						}
-						
-						if (is_Wiki) {
-							sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
-							
-							try {
-								sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
-										+ URLEncoder.encode(Finder.getText(), "UTF-8"));
-								sp_R_down_Chat_Input.setText("Wiki 로 부터 사전 검색을 합니다.");
-							} catch (UnsupportedEncodingException e1) {
-								sp_R_down_Chat_Input.setText("Wiki 페이지 로드 중 주소 형식이 잘못 되었습니다!");
-							} catch (FileNotFoundException e1) {
-								sp_R_down_Chat_Input.setText("해당 검색어는 Wiki 에 존재하지 않는 단어 입니다.");
-							} catch (IOException e1) {
-								sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
-							}
-						} else {
-							sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
-							sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
-							try {
-								output.writeUTF(msg);
-							} catch (IOException e1) {
-								frame_startup.setVisible(true);
-								frame_main.setVisible(false);
-								JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
-							}
-						}
+						Dic_Word_Sender();
 					}
 				}
 			});
