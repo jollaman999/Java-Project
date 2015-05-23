@@ -363,7 +363,7 @@ public class Client extends JFrame {
 
 		finder_panel.add(BorderLayout.CENTER, Finder);
 		finder_panel.add(BorderLayout.EAST, find_button);
-		
+
 		Dic_select_OpenDIC.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -439,6 +439,9 @@ public class Client extends JFrame {
 		sp_leftright.setDividerLocation(260);
 
 		sp_R_up_Wiki_Broswer.setEditable(false);
+		
+		
+		
 	}
 
 	// 채팅 클라이어트 리시버
@@ -476,15 +479,19 @@ public class Client extends JFrame {
 		            	  String[] words;
 		            	  
 		            	  read = input.readUTF();
+		            	  
+		            	  if (read.matches(".*님이 OpenDic.*"))
+		            		  continue;
+		            	  
 		            	  reads = read.split("@");
 		            	  
 		            	  words = reads[1].split("#");
 		            	  
-		            	  for (int i = 0; i < 10; i++)
+		            	  for (int i = 0; i < wordlist.length; i++)
 		            		  wordlist[i].setText("");
 		            	  
-		            	  for (int i = 0; i < words.length; i++)
-		            		  wordlist[i].setText(words[i]);
+		            	  for (int i = 1; i < words.length; i++)
+		            		  wordlist[i - 1].setText(words[i]);
 		            	  
 		                  sp_R_up_OpenDic_Show.setText(reads[0]);
 		               }
@@ -535,7 +542,6 @@ public class Client extends JFrame {
 
 		void Dic_Word_Sender() {
 			sp_R_updown.setDividerLocation(610);
-			msg = Finder.getText();
 			
 			try {
 				output.writeUTF("DIC_MODE");
@@ -577,7 +583,7 @@ public class Client extends JFrame {
 				}
 			}
 		}
-		
+
 		public ClientSender(Socket socket) {
 			this.socket = socket;
 			try {
@@ -650,6 +656,7 @@ public class Client extends JFrame {
 			find_button.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
+					msg = Finder.getText();
 					Dic_Word_Sender();
 				}
 			});
@@ -666,8 +673,250 @@ public class Client extends JFrame {
 				@Override
 				public void keyPressed(KeyEvent arg0) {
 					if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+						msg = Finder.getText();
 						Dic_Word_Sender();
 					}
+				}
+			});
+			
+			// TODO: wordlist
+			wordlist[0].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist[0].getText();
+					Dic_Word_Sender();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist[1].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist[1].getText();
+					Dic_Word_Sender();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist[2].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist[2].getText();
+					Dic_Word_Sender();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist[3].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist[3].getText();
+					Dic_Word_Sender();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist[4].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist[4].getText();
+					Dic_Word_Sender();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist[5].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist[5].getText();
+					Dic_Word_Sender();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist[6].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist[6].getText();
+					Dic_Word_Sender();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist[7].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist[7].getText();
+					Dic_Word_Sender();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist[8].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist[8].getText();
+					Dic_Word_Sender();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+				}
+			});
+			
+			wordlist[9].addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					msg = wordlist[9].getText();
+					Dic_Word_Sender();
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
 				}
 			});
 			
