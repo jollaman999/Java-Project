@@ -201,7 +201,7 @@ public class Server extends JFrame {
             try {
                 // 클라이언트가 서버에 접속하면 OpenDic 에 알린다.
                 name = input.readUTF();
-                sendToAll("#" + name + "[" + socket.getInetAddress() + ":"
+                sendToAll("* " + name + "[" + socket.getInetAddress() + ":"
                         + socket.getPort() + "]" + "님이 OpenDic 에 접속하였습니다.");
  
                 clients.put(name, output);
@@ -231,7 +231,7 @@ public class Server extends JFrame {
             } finally {
                 // 접속이 종료되면
                 clients.remove(name);
-                sendToAll("#" + name + "[" + socket.getInetAddress() + ":"
+                sendToAll("* " + name + "[" + socket.getInetAddress() + ":"
                         + socket.getPort() + "]" + "님이 OpenDic 에서 나갔습니다.");
                 JTA_ChatServer.append(getTime() +  " " + name + "[" + socket.getInetAddress() + ":"
                         + socket.getPort() + "]" + "님이 OpenDic 에서 나갔습니다." +"\n");
@@ -272,8 +272,6 @@ public class Server extends JFrame {
                 	if (message.equals("DIC_MODE"))
                 		return;
                 	
-                	System.out.println(message);
-                	
                 	if (search_index == -1) {
                 		sb_to_client.append("해당 단어는 OpenDic 에 존재하지 않는 단어입니다.");
                 		sb_to_client.append("@");
@@ -291,9 +289,10 @@ public class Server extends JFrame {
                 	TreeMap similarity_treemap = new TreeMap(similarity_map);
                 	Iterator iteratorKey = similarity_treemap.descendingKeySet().iterator();
                 	
+                	sb_to_client.append("#");
+                	
                 	while(iteratorKey.hasNext()){
                 		   String key = (String) iteratorKey.next();
-                		   System.out.println(key+","+similarity_treemap.get(key));
                 		   sb_to_client.append(similarity_treemap.get(key) + "#");
                 	}
                 	dos.writeUTF(sb_to_client.toString());
