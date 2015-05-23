@@ -349,32 +349,6 @@ public class Client extends JFrame {
 		main_file.add(file_save);
 		main_file.add(file_saveas);
 		main_file.add(file_exit);
-		
-		// TODO: 채팅/사전 전환
-		file_chatmode.addActionListener(new ActionListener() {			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {	
-				if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
-					is_ChatMode = false;
-					sp_updown.setDividerLocation(610);
-					file_chatmode.setText("채팅 모드 전환");
-					sp_R_down_Chat_Input.setEditable(false);
-					if (is_Wiki)
-						sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
-					else
-						sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
-					sp_R_down_Chat_Input.setText("사전 모드로 전환 되었습니다. 이제부터 이 곳에는 프로그램 상태가 표시되며 대화를 입력 하실 수 없습니다.");
-				} else {	// 현재 모드가 사전 모드이며 채팅 모드로 전환
-					is_ChatMode = true;
-					sp_updown.setDividerLocation(460);
-					file_chatmode.setText("사전 모드 전환");
-					sp_R_down_Chat_Input.setEditable(true);
-					sp_updown.setLeftComponent(sp_R_up_Chat_JSP);
-					sp_R_down_Chat_Input.setText("");
-					sp_R_up_Chat_Show.append("채팅 모드로 전환 되었습니다. 이제부터 아래 대화창에 대화를 입력 하실 수 있습니다.\n");
-				}
-			}
-		});
 
 		sp_L.add(sp_L_find_panel, 0);
 		sp_L.add(sp_L_down, 1);
@@ -410,12 +384,6 @@ public class Client extends JFrame {
 		finder_panel.add(BorderLayout.SOUTH, Dic_select_Panel);
 		
 		frame_main.setJMenuBar(mainMenu_bar);
-
-		file_exit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
 
 		frame_main.setBackground(Color.WHITE);
 		frame_main.setSize(1280, 720);
@@ -487,7 +455,10 @@ public class Client extends JFrame {
 		public void run() {
 			while (input != null) {
 				try {
-					sp_R_up_Chat_Show.append(input.readUTF() + "\n");
+					if (is_ChatMode)
+						sp_R_up_Chat_Show.append(input.readUTF() + "\n");
+					else
+						sp_R_up_OpenDic_Show.setText(input.readUTF());
 					scrollbar.setValue(scrollbar.getMaximum()); // 맨아래로 스크롤
 				} catch (IOException e) {
 				}
@@ -562,10 +533,17 @@ public class Client extends JFrame {
 					}
 
 					// 메세지 창에서 엔터를 치면 메세지를 전송
-					if (arg0.getKeyCode() == KeyEvent.VK_ENTER && !is_lineadd) {
+					if (arg0.getKeyCode() == KeyEvent.VK_ENTER && !is_lineadd) {						
 						msg = sp_R_down_Chat_Input.getText();
-						if (msg.equals("exit"))
+						
+						if (msg.equals("exit")) {
+							try {
+								output.writeUTF("EXIT");
+							} catch (IOException e) {
+							}
 							System.exit(0);
+						}
+							
 						try {
 							output.writeUTF(getTime() + " [" + chat_name + "] " + msg);
 						} catch (IOException e) {
@@ -594,9 +572,16 @@ public class Client extends JFrame {
 			
 			find_button.addActionListener(new ActionListener() {
 				@Override
-				public void actionPerformed(ActionEvent e) {
+				public void actionPerformed(ActionEvent arg0) {
 					sp_updown.setDividerLocation(610);
 					msg = Finder.getText();
+					
+					try {
+						output.writeUTF("DIC_MODE");
+					} catch (IOException e) {
+						sp_R_down_Chat_Input.setText("사전 사용 모드를 서버로 알리는 도중 문제가 발생하였습니다!");
+						return;
+					}
 					
 					if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
 						is_ChatMode = false;
@@ -647,6 +632,13 @@ public class Client extends JFrame {
 						sp_updown.setDividerLocation(610);
 						msg = Finder.getText();
 						
+						try {
+							output.writeUTF("DIC_MODE");
+						} catch (IOException e) {
+							sp_R_down_Chat_Input.setText("사전 사용 모드를 서버로 알리는 도중 문제가 발생하였습니다!");
+							return;
+						}
+						
 						if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
 							is_ChatMode = false;
 							file_chatmode.setText("채팅 모드 전환");
@@ -679,6 +671,56 @@ public class Client extends JFrame {
 							}
 						}
 					}
+				}
+			});
+			
+			// TODO: 채팅/사전 전환
+			file_chatmode.addActionListener(new ActionListener() {			
+				@Override
+				public void actionPerformed(ActionEvent arg0) {	
+					if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
+						try {
+							output.writeUTF("DIC_MODE");
+						} catch (IOException e) {
+							sp_R_down_Chat_Input.setText("사전 사용 모드를 서버로 알리는 도중 문제가 발생하였습니다!");
+							return;
+						}
+						
+						is_ChatMode = false;
+						sp_updown.setDividerLocation(610);
+						file_chatmode.setText("채팅 모드 전환");
+						sp_R_down_Chat_Input.setEditable(false);
+						if (is_Wiki)
+							sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+						else
+							sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+						sp_R_down_Chat_Input.setText("사전 모드로 전환 되었습니다. 이제부터 이 곳에는 프로그램 상태가 표시되며 대화를 입력 하실 수 없습니다.");
+					} else {	// 현재 모드가 사전 모드이며 채팅 모드로 전환
+						try {
+							output.writeUTF("CHAT_MODE");
+						} catch (IOException e) {
+							sp_R_down_Chat_Input.setText("채팅 사용 모드를 서버로 알리는 도중 문제가 발생하였습니다!");
+							return;
+						}
+						
+						is_ChatMode = true;
+						sp_updown.setDividerLocation(460);
+						file_chatmode.setText("사전 모드 전환");
+						sp_R_down_Chat_Input.setEditable(true);
+						sp_updown.setLeftComponent(sp_R_up_Chat_JSP);
+						sp_R_down_Chat_Input.setText("");
+						sp_R_up_Chat_Show.append("채팅 모드로 전환 되었습니다. 이제부터 아래 대화창에 대화를 입력 하실 수 있습니다.\n");
+					}
+				}
+			});
+			
+			file_exit.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						output.writeUTF("EXIT");
+					} catch (IOException arg0) {
+					}
+					System.exit(0);
 				}
 			});
 		}
