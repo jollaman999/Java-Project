@@ -56,6 +56,13 @@ public class Client extends JFrame {
 	static int JTF_name_input_counter = 0;
 
 	// ------- 메인 프레임 관련 영역 --------
+	JMenuBar mainMenu_bar = new JMenuBar();
+	JMenu main_file = new JMenu("파일");
+	JMenuItem file_chatmode = new JMenuItem("채팅 모드 전환");
+	JMenuItem file_open = new JMenuItem("불러오기");
+	JMenuItem file_save = new JMenuItem("저장하기");
+	JMenuItem file_saveas = new JMenuItem("다른 이름으로 저장");
+	JMenuItem file_exit = new JMenuItem("종료");	
 	JSplitPane sp_leftright = new JSplitPane();
 	JSplitPane sp_updown = new JSplitPane();
 	JTextField Finder = new JTextField();
@@ -336,16 +343,6 @@ public class Client extends JFrame {
 		}
 
 		// TODO --------- 메인 프레임 관련 영역 -----------
-
-		JMenuBar mainMenu_bar = new JMenuBar();
-
-		JMenu main_file = new JMenu("파일");
-		JMenuItem file_chatmode = new JMenuItem("채팅 모드 전환");
-		JMenuItem file_open = new JMenuItem("불러오기");
-		JMenuItem file_save = new JMenuItem("저장하기");
-		JMenuItem file_saveas = new JMenuItem("다른 이름으로 저장");
-		JMenuItem file_exit = new JMenuItem("종료");
-
 		mainMenu_bar.add(main_file);
 		main_file.add(file_chatmode);
 		main_file.add(file_open);
@@ -600,6 +597,16 @@ public class Client extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					sp_updown.setDividerLocation(610);
 					
+					if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
+						is_ChatMode = false;
+						file_chatmode.setText("채팅 모드 전환");
+						sp_R_down_Chat_Input.setEditable(false);
+						if (is_Wiki)
+							sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+						else
+							sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+					}
+					
 					if (is_Wiki) {
 						msg = sp_R_down_Chat_Input.getText();
 						sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
@@ -643,6 +650,16 @@ public class Client extends JFrame {
 				public void keyPressed(KeyEvent arg0) {
 					if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 						sp_updown.setDividerLocation(610);
+						
+						if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
+							is_ChatMode = false;
+							file_chatmode.setText("채팅 모드 전환");
+							sp_R_down_Chat_Input.setEditable(false);
+							if (is_Wiki)
+								sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+							else
+								sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+						}
 						
 						if (is_Wiki) {
 							msg = sp_R_down_Chat_Input.getText();
