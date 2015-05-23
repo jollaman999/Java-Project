@@ -600,9 +600,8 @@ public class Client extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					sp_updown.setDividerLocation(610);
 					
-					msg = sp_R_down_Chat_Input.getText();
-					
 					if (is_Wiki) {
+						msg = sp_R_down_Chat_Input.getText();
 						sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
 						try {
 							sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
@@ -616,6 +615,7 @@ public class Client extends JFrame {
 							sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
 						}
 					} else {
+						msg = Finder.getText();
 						sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 						sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
 						try {
@@ -644,9 +644,8 @@ public class Client extends JFrame {
 					if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 						sp_updown.setDividerLocation(610);
 						
-						msg = sp_R_down_Chat_Input.getText();
-						
 						if (is_Wiki) {
+							msg = sp_R_down_Chat_Input.getText();
 							sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
 							
 							try {
@@ -661,6 +660,7 @@ public class Client extends JFrame {
 								sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
 							}
 						} else {
+							msg = Finder.getText();
 							sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 							sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
 							try {
