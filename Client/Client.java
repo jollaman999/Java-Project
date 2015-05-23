@@ -735,15 +735,20 @@ public class Client extends JFrame {
 				}
 			});
 			
-			// TODO: wordlist			
-			wordlist[1].addMouseListener(new MouseListener() {				
+			// TODO: wordlist
+			class Wordlist_Handler implements MouseListener {
+				int index = 0;
+				
+				public Wordlist_Handler (int i) {
+					this.index = i;
+				}
 				@Override
 				public void mouseReleased(MouseEvent e) {
 				}
 				
 				@Override
 				public void mousePressed(MouseEvent e) {
-					msg = wordlist[1].getText();
+					msg = wordlist[index].getText();
 					Dic_Word_Sender();
 					wordlist_history_allocator();
 				}
@@ -758,17 +763,33 @@ public class Client extends JFrame {
 				
 				@Override
 				public void mouseClicked(MouseEvent e) {
-				}
-			});
+				}				
+			}
+
+			wordlist[1].addMouseListener(new Wordlist_Handler(1));
+			wordlist[2].addMouseListener(new Wordlist_Handler(2));
+			wordlist[3].addMouseListener(new Wordlist_Handler(3));
+			wordlist[4].addMouseListener(new Wordlist_Handler(4));
+			wordlist[5].addMouseListener(new Wordlist_Handler(5));
+			wordlist[6].addMouseListener(new Wordlist_Handler(6));
+			wordlist[7].addMouseListener(new Wordlist_Handler(7));
+			wordlist[8].addMouseListener(new Wordlist_Handler(8));
+			wordlist[9].addMouseListener(new Wordlist_Handler(9));
 			
-			wordlist[2].addMouseListener(new MouseListener() {				
+			// TODO: wordlist_history
+			class Wordlist_History_Handler implements MouseListener {
+				int index = 0;
+				
+				public Wordlist_History_Handler (int i) {
+					this.index = i;
+				}
 				@Override
 				public void mouseReleased(MouseEvent e) {
 				}
 				
 				@Override
 				public void mousePressed(MouseEvent e) {
-					msg = wordlist[2].getText();
+					msg = wordlist_history[index].getText();
 					Dic_Word_Sender();
 					wordlist_history_allocator();
 				}
@@ -783,409 +804,18 @@ public class Client extends JFrame {
 				
 				@Override
 				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist[3].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist[3].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist[4].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist[4].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist[5].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist[5].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist[6].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist[6].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist[7].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist[7].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist[8].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist[8].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist[9].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist[9].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			// TODO: wordlist_history			
-			wordlist_history[1].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist_history[1].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist_history[2].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist_history[2].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist_history[3].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist_history[3].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist_history[4].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist_history[4].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist_history[5].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist_history[5].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist_history[6].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist_history[6].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist_history[7].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist_history[7].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist_history[8].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist_history[8].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
-			
-			wordlist_history[9].addMouseListener(new MouseListener() {				
-				@Override
-				public void mouseReleased(MouseEvent e) {
-				}
-				
-				@Override
-				public void mousePressed(MouseEvent e) {
-					msg = wordlist_history[9].getText();
-					Dic_Word_Sender();
-					wordlist_history_allocator();
-				}
-				
-				@Override
-				public void mouseExited(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseEntered(MouseEvent e) {
-				}
-				
-				@Override
-				public void mouseClicked(MouseEvent e) {
-				}
-			});
+				}				
+			}
+
+			wordlist_history[1].addMouseListener(new Wordlist_History_Handler(1));
+			wordlist_history[2].addMouseListener(new Wordlist_History_Handler(2));
+			wordlist_history[3].addMouseListener(new Wordlist_History_Handler(3));
+			wordlist_history[4].addMouseListener(new Wordlist_History_Handler(4));
+			wordlist_history[5].addMouseListener(new Wordlist_History_Handler(5));
+			wordlist_history[6].addMouseListener(new Wordlist_History_Handler(6));
+			wordlist_history[7].addMouseListener(new Wordlist_History_Handler(7));
+			wordlist_history[8].addMouseListener(new Wordlist_History_Handler(8));
+			wordlist_history[9].addMouseListener(new Wordlist_History_Handler(9));
 			
 			// 채팅/사전 전환
 			file_chatmode.addActionListener(new ActionListener() {			
