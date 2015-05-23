@@ -425,68 +425,6 @@ public class Client extends JFrame {
 		frame_main.setContentPane(sp_leftright);
 		frame_main.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		find_button.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				sp_updown.setDividerLocation(610);
-				
-				if (is_Wiki) {
-					sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
-					try {
-						sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
-								+ URLEncoder.encode(Finder.getText(), "UTF-8"));
-						sp_R_down_Chat_Input.setText("Wiki 로 부터 사전 검색을 합니다.");
-					} catch (UnsupportedEncodingException e1) {
-						sp_R_down_Chat_Input.setText("Wiki 페이지 로드 중 주소 형식이 잘못 되었습니다!");
-					} catch (FileNotFoundException e1) {
-						sp_R_down_Chat_Input.setText("해당 검색어는 Wiki 에 존재하지 않는 단어 입니다.");
-					} catch (IOException e1) {
-						sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
-					}
-				} else {
-					sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
-					sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
-				}
-			}
-		});
-		// TODO: Finder
-		Finder.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent arg0) {
-			}
-
-			@Override
-			public void keyReleased(KeyEvent arg0) {
-			}
-
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
-					sp_updown.setDividerLocation(610);
-					
-					if (is_Wiki) {
-						sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
-						
-						try {
-							sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
-									+ URLEncoder.encode(Finder.getText(), "UTF-8"));
-							sp_R_down_Chat_Input.setText("Wiki 로 부터 사전 검색을 합니다.");
-						} catch (UnsupportedEncodingException e1) {
-							sp_R_down_Chat_Input.setText("Wiki 페이지 로드 중 주소 형식이 잘못 되었습니다!");
-						} catch (FileNotFoundException e1) {
-							sp_R_down_Chat_Input.setText("해당 검색어는 Wiki 에 존재하지 않는 단어 입니다.");
-						} catch (IOException e1) {
-							sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
-						}
-					} else {
-						sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
-						sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
-					}
-				}
-			}
-		});
-
 		sp_L_commonWord.setEditable(false);
 		sp_L_Friendlist.setEditable(false);
 
@@ -614,6 +552,7 @@ public class Client extends JFrame {
 					sp_R_down_Chat_Input.setText("서버에 연결해 주십시오!");
 			} catch (Exception e) {
 			}
+			
 			sp_R_down_Chat_Input.addKeyListener(new KeyListener() {
 				@Override
 				public void keyPressed(KeyEvent arg0) {
@@ -653,6 +592,68 @@ public class Client extends JFrame {
 
 				@Override
 				public void keyTyped(KeyEvent arg0) {
+				}
+			});
+			
+			find_button.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					sp_updown.setDividerLocation(610);
+					
+					if (is_Wiki) {
+						sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+						try {
+							sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
+									+ URLEncoder.encode(Finder.getText(), "UTF-8"));
+							sp_R_down_Chat_Input.setText("Wiki 로 부터 사전 검색을 합니다.");
+						} catch (UnsupportedEncodingException e1) {
+							sp_R_down_Chat_Input.setText("Wiki 페이지 로드 중 주소 형식이 잘못 되었습니다!");
+						} catch (FileNotFoundException e1) {
+							sp_R_down_Chat_Input.setText("해당 검색어는 Wiki 에 존재하지 않는 단어 입니다.");
+						} catch (IOException e1) {
+							sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
+						}
+					} else {
+						sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+						sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
+					}
+				}
+			});
+			
+			// TODO: Finder
+			Finder.addKeyListener(new KeyListener() {
+				@Override
+				public void keyTyped(KeyEvent arg0) {
+				}
+
+				@Override
+				public void keyReleased(KeyEvent arg0) {
+				}
+
+				@Override
+				public void keyPressed(KeyEvent arg0) {
+					if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+						sp_updown.setDividerLocation(610);
+						
+						if (is_Wiki) {
+							sp_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+							
+							try {
+								sp_R_up_Wiki_Broswer.setPage("http://ko.wikipedia.org/wiki/"
+										+ URLEncoder.encode(Finder.getText(), "UTF-8"));
+								sp_R_down_Chat_Input.setText("Wiki 로 부터 사전 검색을 합니다.");
+							} catch (UnsupportedEncodingException e1) {
+								sp_R_down_Chat_Input.setText("Wiki 페이지 로드 중 주소 형식이 잘못 되었습니다!");
+							} catch (FileNotFoundException e1) {
+								sp_R_down_Chat_Input.setText("해당 검색어는 Wiki 에 존재하지 않는 단어 입니다.");
+							} catch (IOException e1) {
+								sp_R_down_Chat_Input.setText("사전 로드에 실패하였습니다!");
+							}
+						} else {
+							sp_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+							sp_R_down_Chat_Input.setText("OpenDic 으로 부터 사전 검색을 합니다.");
+						}
+					}
 				}
 			});
 		}
