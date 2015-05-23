@@ -215,11 +215,11 @@ public class Server extends JFrame {
                 while (input != null) {
                 	message = input.readUTF();
                 	
-                	if (message.equals("CHAT_MODE"))
+                	if (message.matches(".*CHAT_MODE.*"))
                 		is_ChatMode = true;
-                	else if (message.equals("DIC_MODE"))
+                	else if (message.matches(".*DIC_MODE.*"))
                 		is_ChatMode = false;
-                	else if (message.equals("EXIT"))
+                	else if (message.matches(".*EXIT.*"))
                 		break;
                 	
                 	if (is_ChatMode)
@@ -243,7 +243,17 @@ public class Server extends JFrame {
  
         public void sendToAll(String message) {
             Iterator<String> it = clients.keySet().iterator();
- 
+            
+            if (message.matches("DIC_MODE")) {
+            	is_ChatMode = false;
+        		return;
+        	}
+            
+        	if (message.matches("CHAT_MODE")) {
+        		is_ChatMode = true;
+        		return;
+        	}
+
             while (it.hasNext()) {
                 try {
                     DataOutputStream dos = clients.get(it.next());
@@ -267,13 +277,19 @@ public class Server extends JFrame {
                 	int search_index = Dic_data.indexOf(message);
                 	Double similarity = (double) 0.0f;
                 	StringBuffer sb_to_client = new StringBuffer("");
-                	Map similarity_map = new HashMap();
+                	Map<String, String> similarity_map = new HashMap<String, String>();
                 	
-                	if (message.equals("DIC_MODE"))
+                	if (message.matches("CHAT_MODE")) {
+                		is_ChatMode = true;
                 		return;
+                	}
+                		
+                    if (message.matches("DIC_MODE")) {
+                		return;
+                	}
                 	
                 	if (search_index == -1) {
-                		sb_to_client.append("해당 단어는 OpenDic 에 존재하지 않는 단어입니다.");
+                		sb_to_client.append("해당 검색어는 OpenDic 에 존재하지 않는 단어 입니다.");	
                 		sb_to_client.append("@");
                 	} else {
                 		sb_to_client.append(Dic_data.get(search_index + 1));
@@ -286,8 +302,8 @@ public class Server extends JFrame {
                 			similarity_map.put(similarity.toString(), Dic_data.get(i));
                 	}
                 	
-                	TreeMap similarity_treemap = new TreeMap(similarity_map);
-                	Iterator iteratorKey = similarity_treemap.descendingKeySet().iterator();
+                	TreeMap<String, String> similarity_treemap = new TreeMap<String, String>(similarity_map);
+                	Iterator<String> iteratorKey = similarity_treemap.descendingKeySet().iterator();
                 	
                 	sb_to_client.append("#");
                 	
