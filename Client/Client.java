@@ -563,6 +563,15 @@ public class Client extends JFrame {
 		boolean is_lineadd = false;
 
 		void Dic_Word_Sender() {
+			try {
+				output.writeUTF("DIC_MODE");
+			} catch (IOException e) {
+				frame_startup.setVisible(true);
+				frame_main.setVisible(false);
+				JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+				return;
+			}
+			
 			sp_R_updown.setDividerLocation(610);
 			Finder.setText(msg);
 			
@@ -670,6 +679,15 @@ public class Client extends JFrame {
 
 					// 메세지 창에서 엔터를 치면 메세지를 전송
 					if (arg0.getKeyCode() == KeyEvent.VK_ENTER && !is_lineadd) {
+						try {
+							output.writeUTF("CHAT_MODE");
+						} catch (IOException e) {
+							frame_startup.setVisible(true);
+							frame_main.setVisible(false);
+							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+							return;
+						}
+						
 						msg = sp_R_down_Chat_Input.getText();
 						
 						if (msg.equals("exit")) {
@@ -821,16 +839,7 @@ public class Client extends JFrame {
 			file_chatmode.addActionListener(new ActionListener() {			
 				@Override
 				public void actionPerformed(ActionEvent arg0) {	
-					if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
-						try {
-							output.writeUTF("DIC_MODE");
-						} catch (IOException e) {
-							frame_startup.setVisible(true);
-							frame_main.setVisible(false);
-							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
-							return;
-						}
-						
+					if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환						
 						is_ChatMode = false;
 						sp_R_updown.setDividerLocation(610);
 						file_chatmode.setText("채팅 모드 전환");
@@ -841,16 +850,7 @@ public class Client extends JFrame {
 							sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
 						sp_R_down_Chat_Input.setText("사전 모드로 전환 되었습니다."
 									+ "이제부터 이 곳에는 프로그램 상태가 표시되며 대화를 입력 하실 수 없습니다.");
-					} else {	// 현재 모드가 사전 모드이며 채팅 모드로 전환
-						try {
-							output.writeUTF("CHAT_MODE");
-						} catch (IOException e) {
-							frame_startup.setVisible(true);
-							frame_main.setVisible(false);
-							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
-							return;
-						}
-						
+					} else {	// 현재 모드가 사전 모드이며 채팅 모드로 전환						
 						is_ChatMode = true;
 						sp_R_updown.setDividerLocation(460);
 						file_chatmode.setText("사전 모드 전환");
