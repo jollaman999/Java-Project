@@ -258,7 +258,7 @@ public class Server extends JFrame {
                 try {
                     DataOutputStream dos = clients.get(it.next());
                     
-                    dos.writeUTF(message);
+                    dos.writeUTF("CHAT_DATA" + message);
                 } catch (Exception e) {
                 }
             }
