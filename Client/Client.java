@@ -471,6 +471,8 @@ public class Client extends JFrame {
 		JScrollBar scrollbar = sp_R_up_Chat_JSP.getVerticalScrollBar();
 		JScrollBar scrollbar_L_U = sp_L_up.getVerticalScrollBar();
 		JScrollBar scrollbar_L_D = sp_L_down.getVerticalScrollBar();
+		
+		String message = new String();
 
 		public ClientReceiver(Socket socket) {
 			this.socket = socket;
@@ -490,35 +492,43 @@ public class Client extends JFrame {
 		public void run() {
 			while (input != null) {
 				try {
-					if (is_ChatMode) {
-		                  sp_R_up_Chat_Show.append(input.readUTF() + "\n");
-		                  scrollbar.setValue(scrollbar.getMaximum()); // 맨아래로 스크롤
-		               } else {	// TODO: 유사단어 스플릿
-		            	  String read;
-		            	  String[] reads;
-		            	  String[] words;
-		            	  
-		            	  read = input.readUTF();
-		            	  
-		            	  if (read.matches(".*님이 OpenDic.*"))
-		            		  continue;
-		            	  
-		            	  if (!read.matches(".*#.*"))
-		            		  continue;
-		            	  
-		            	  reads = read.split("@");
-		            	  sp_R_up_OpenDic_Show.setText(reads[0]);
-		            	  
-		            	  words = reads[1].split("#");
-		            	  
-		            	  for (int i = 1; i < wordlist.length; i++)
-		            		  wordlist[i].setText("");
-		            	  
-		            	  for (int i = 1; i < words.length; i++)
-		            		  wordlist[i].setText(words[i]);
-		               }
+					message = input.readUTF();
+					message_specifier();
 				} catch (IOException e) {
 				}
+			}
+		}
+		
+		void message_specifier() {
+			if (message.matches("CHAT_DATA.*")) {
+
+				message = message.substring("CHAT_DATA".length());
+
+				sp_R_up_Chat_Show.append(message + "\n");
+				scrollbar.setValue(scrollbar.getMaximum()); // 맨아래로 스크롤
+			} else { // TODO: 유사단어 스플릿
+				String read;
+				String[] reads;
+				String[] words;
+
+				read = message;
+
+				if (read.matches(".*님이 OpenDic.*"))
+					return;
+
+				if (!read.matches(".*#.*"))
+					return;
+
+				reads = read.split("@");
+				sp_R_up_OpenDic_Show.setText(reads[0]);
+
+				words = reads[1].split("#");
+
+				for (int i = 1; i < wordlist.length; i++)
+					wordlist[i].setText("");
+
+				for (int i = 1; i < words.length; i++)
+					wordlist[i].setText(words[i]);
 			}
 		}
 	}
@@ -563,15 +573,6 @@ public class Client extends JFrame {
 		boolean is_lineadd = false;
 
 		void Dic_Word_Sender() {
-			try {
-				output.writeUTF("DIC_MODE");
-			} catch (IOException e) {
-				frame_startup.setVisible(true);
-				frame_main.setVisible(false);
-				JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
-				return;
-			}
-			
 			sp_R_updown.setDividerLocation(610);
 			Finder.setText(msg);
 			
