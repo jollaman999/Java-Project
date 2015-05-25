@@ -493,7 +493,6 @@ public class Client extends JFrame {
 					message = input.readUTF();
 					message_specifier();
 				} catch (IOException e) {
-					Client_Disconnected();
 				}
 			}
 		}
