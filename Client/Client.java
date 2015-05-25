@@ -50,7 +50,7 @@ public class Client extends JFrame {
 	Color FrameColor = new Color(238, 238, 238, 255);
 	JPanel login_panel = new JPanel(new GridLayout(4, 1, 0, 1));
 	JPanel login_panel_button_area = new JPanel(new GridLayout(1, 3));
-	JTextField JTF_ip = new JTextField();
+	static JTextField JTF_ip = new JTextField();
 	JTextField JTF_name = new JTextField();
 	static int JTF_ip_input_counter = 0;
 	static int JTF_name_input_counter = 0;
@@ -126,10 +126,10 @@ public class Client extends JFrame {
 			JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-	JFrame frame_startup = new JFrame("OpenDIC v1.0");
+	static JFrame frame_startup = new JFrame("OpenDIC v1.0");
 	JPanel start_up_main_panel = new JPanel();
 
-	JFrame frame_main = new JFrame("OpenDIC v1.0");
+	static JFrame frame_main = new JFrame("OpenDIC v1.0");
 	
 
 
@@ -480,9 +480,7 @@ public class Client extends JFrame {
 				if (socket != null)
 					input = new DataInputStream(socket.getInputStream());
 				else {
-					frame_startup.setVisible(true);
-					frame_main.setVisible(false);
-					JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+					Client_Disconnected();
 				}
 			} catch (IOException e) {
 			}
@@ -495,6 +493,7 @@ public class Client extends JFrame {
 					message = input.readUTF();
 					message_specifier();
 				} catch (IOException e) {
+					Client_Disconnected();
 				}
 			}
 		}
@@ -579,9 +578,7 @@ public class Client extends JFrame {
 			try {
 				output.writeUTF("DIC_MODE");
 			} catch (IOException e) {
-				frame_startup.setVisible(true);
-				frame_main.setVisible(false);
-				JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+				Client_Disconnected();
 				return;
 			}
 			
@@ -619,9 +616,7 @@ public class Client extends JFrame {
 				try {
 					output.writeUTF(msg);
 				} catch (IOException e1) {
-					frame_startup.setVisible(true);
-					frame_main.setVisible(false);
-					JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+					Client_Disconnected();
 				}
 			}
 		}
@@ -655,9 +650,7 @@ public class Client extends JFrame {
 
 					is_connected = true;
 				} else {
-					frame_startup.setVisible(true);
-					frame_main.setVisible(false);
-					JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+					Client_Disconnected();
 				}
 			} catch (Exception e) {
 			}
@@ -683,9 +676,7 @@ public class Client extends JFrame {
 						try {
 							output.writeUTF("CHAT_MODE");
 						} catch (IOException e) {
-							frame_startup.setVisible(true);
-							frame_main.setVisible(false);
-							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+							Client_Disconnected();
 							return;
 						}
 						
@@ -702,9 +693,7 @@ public class Client extends JFrame {
 						try {
 							output.writeUTF(getTime() + " [" + chat_name + "] " + msg);
 						} catch (IOException e) {
-							frame_startup.setVisible(true);
-							frame_main.setVisible(false);
-							JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+							Client_Disconnected();
 						}
 						sp_R_down_Chat_Input.setText(""); // 입력 창 비움
 						scrollbar.setValue(scrollbar.getMaximum()); // 맨아래로 스크롤
@@ -874,6 +863,12 @@ public class Client extends JFrame {
 				}
 			});
 		}
+	}
+	
+	static void Client_Disconnected() {
+		frame_startup.setVisible(true);
+		frame_main.setVisible(false);
+		JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
 	}
 	
 	// 현재 시간 얻어오기
