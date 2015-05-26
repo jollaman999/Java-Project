@@ -29,14 +29,22 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Client extends JFrame {
@@ -111,6 +119,10 @@ public class Client extends JFrame {
 	JTextField[] wordlist_history = new JTextField[10];
 	String[] wordlist_history_queue = new String[10];
 	
+	// Mywordlist
+	String Mywordlist_File = "./Mywordlist.txt";
+	String Mywordlist_to_Save="";
+	
 	// Wiki 패널
 	JEditorPane sp_R_up_Wiki_Broswer = new JEditorPane();
 	JScrollPane sp_R_up_Wiki_JSP = new JScrollPane(sp_R_up_Wiki_Broswer);
@@ -135,9 +147,7 @@ public class Client extends JFrame {
 
 	// 채팅 대화명, 채팅 소켓
 	private String chat_name;
-	private Socket chat_socket;
-
-	private boolean is_connected = false;
+	static private Socket chat_socket;
 
 	// 메인 화면
 	public Client() {
@@ -356,6 +366,103 @@ public class Client extends JFrame {
 		main_file.add(file_saveas);
 		main_file.add(file_exit);
 		
+		// TODO: 저장/열기
+		file_open.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+				sp_R_updown.setDividerLocation(610);
+				is_ChatMode = false;
+				is_Wiki = false;
+				
+				try {
+					File Dic_file = new File(Mywordlist_File);
+					FileReader Dic_filereader = new FileReader(Dic_file);
+					BufferedReader Dic_bufferedreader = new BufferedReader(
+							Dic_filereader);
+					StringBuffer read = new StringBuffer("");
+					String tmps = new String("");
+
+					try {
+						while ((tmps = Dic_bufferedreader.readLine()) != null) {
+							read.append(tmps);
+							read.append("\r\n");
+
+						}
+					} catch (IOException e1) {
+						sp_R_up_OpenDic_Show.setText("단어 리스트 파일을 읽어오는 중 문제가 발생하였습니다.\n"
+								+ "\"Mywordlist.txt\" 파일이 다른곳에서 사용중인지 확인하고 해당 기능을 재실행 해주십시오.");
+					}
+					sp_R_up_OpenDic_Show.setText(read.toString());
+					try {
+						Dic_bufferedreader.close();
+						Dic_filereader.close();
+					} catch (IOException e1) {
+						sp_R_up_OpenDic_Show.setText("단어 리스트 파일을 닫는 중 문제가 발생하였습니다.");
+					}
+				} catch (FileNotFoundException e1) {
+					sp_R_up_OpenDic_Show.setText("단어 리스트 파일이 존재 하지 않습니다.\n"
+										+ "\"Mywordlist.txt\" 파일이 존재하는지 확인하고 해당 기능을 재실행 해주십시오.");
+					return;
+				}
+			}
+		});
+
+		file_save.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {StringBuffer read = new StringBuffer("");
+
+				if ((!is_Wiki) && (!is_ChatMode)) {					
+					try {
+
+						File Dic_file = new File(Mywordlist_File);
+
+						FileReader Dic_filereader = new FileReader(Dic_file);
+						BufferedReader Dic_bufferedreader = new BufferedReader(
+								Dic_filereader);
+						String input;
+
+						while ((input = Dic_bufferedreader.readLine()) != null) {
+							read.append(input);
+							read.append("\r\n");
+						}
+
+						Dic_bufferedreader.close();
+						Dic_filereader.close();
+
+						FileWriter DicFileWriter = new FileWriter(Dic_file);
+						BufferedWriter Dic_bufferedWriter = new BufferedWriter(
+								DicFileWriter);
+						read.append(Mywordlist_to_Save);
+						read.append(": ");
+						read.append(sp_R_up_OpenDic_Show.getText());
+						Dic_bufferedWriter.write(read.toString());
+						Dic_bufferedWriter.close();
+
+					} catch (FileNotFoundException e1) {
+						sp_R_up_OpenDic_Show.setText("단어 리스트 파일이 존재 하지 않습니다.\n"
+								+ "\"Mywordlist.txt\" 파일이 존재하는지 확인하고 해당 기능을 재실행 해주십시오.");
+						return;
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+
+				} else {
+					is_ChatMode = false;
+					is_Wiki = false;
+
+					sp_R_up_OpenDic_Show
+							.setText("저장하기: 해당 기능은 OpenDic 모드에서만 사용할수 있습니다. OpenDic모드로 전환 합니다.");
+					sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+					sp_R_updown.setDividerLocation(610);
+					Dic_select_Wiki.setSelected(false);
+					Dic_select_OpenDIC.setSelected(true);
+				}
+			}
+
+		});
+		
 		sp_L_updown.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		sp_L_updown.setLeftComponent(sp_L_find_panel);
 		sp_L_updown.setRightComponent(sp_L_down);
@@ -433,23 +540,6 @@ public class Client extends JFrame {
 		sp_R_up_Chat_Show.setEditable(false);
 		sp_R_up_Chat_Show.setLineWrap(true);
 		sp_R_down_Chat_Input.setEditable(false);
-		sp_R_down_Chat_Input.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent arg0) {
-				if (!is_connected)
-					sp_R_down_Chat_Input.setText("서버에 연결해 주십시오!");
-			}
-
-			@Override
-			public void keyReleased(KeyEvent arg0) {
-			}
-
-			@Override
-			public void keyPressed(KeyEvent arg0) {
-				if (!is_connected)
-					sp_R_down_Chat_Input.setText("서버에 연결해 주십시오!");
-			}
-		});
 
 		sp_R_down_Chat_Input.setLineWrap(true);
 		sp_R.add(sp_R_updown);
@@ -573,6 +663,7 @@ public class Client extends JFrame {
 		void Dic_Word_Sender() {
 			sp_R_updown.setDividerLocation(610);
 			Finder.setText(msg);
+			Mywordlist_to_Save = msg;
 			
 			try {
 				output.writeUTF("DIC_MODE");
@@ -646,8 +737,6 @@ public class Client extends JFrame {
 
 					sp_R_up_Chat_Show.append("대화방에 입장하였습니다." + "\n");
 					sp_R_down_Chat_Input.setText("");
-
-					is_connected = true;
 				} else {
 					Client_Disconnected();
 				}
@@ -720,6 +809,7 @@ public class Client extends JFrame {
 					msg = Finder.getText();
 					Dic_Word_Sender();
 					wordlist_history_allocator();
+					Finder.setText("");
 				}
 			});
 
@@ -738,7 +828,31 @@ public class Client extends JFrame {
 						msg = Finder.getText();
 						Dic_Word_Sender();
 						wordlist_history_allocator();
+						Finder.setText("");
 					}
+				}
+			});
+			
+			Finder.addMouseListener(new MouseListener() {				
+				@Override
+				public void mouseReleased(MouseEvent e) {					
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					Finder.setText("");
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
 				}
 			});
 			
@@ -864,10 +978,43 @@ public class Client extends JFrame {
 		}
 	}
 	
-	static void Client_Disconnected() {
+	public static void restartApplication_jar() {
+		final String javaBin = System.getProperty("java.home") + File.separator
+				+ "bin" + File.separator + "java";
+		File currentJar = null;
+		try {
+			currentJar = new File(Client.class.getProtectionDomain()
+					.getCodeSource().getLocation().toURI());
+		} catch (URISyntaxException e) {
+		}
+
+		/* is it a jar file? */
+		if (!currentJar.getName().endsWith(".jar"))
+			return;
+
+		/* Build command: java -jar application.jar */
+		final ArrayList<String> command = new ArrayList<String>();
+		command.add(javaBin);
+		command.add("-jar");
+		command.add(currentJar.getPath());
+
+		final ProcessBuilder builder = new ProcessBuilder(command);
+		try {
+			builder.start();
+		} catch (IOException e) {}
+		System.exit(0);
+	}
+	
+	static void Client_Disconnected() {		
 		frame_startup.setVisible(true);
 		frame_main.setVisible(false);
 		JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+		try {
+			if (chat_socket != null)
+				chat_socket.close();
+		} catch (IOException e) {
+		}
+		restartApplication_jar();
 	}
 	
 	// 현재 시간 얻어오기
