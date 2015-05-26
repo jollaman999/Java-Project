@@ -29,7 +29,7 @@ import simmetrics.JaroWinkler;
 public class Server extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private HashMap<String, DataOutputStream> clients;
-    private ServerSocket serverSocket;
+    static private ServerSocket serverSocket;
     
     static JTextArea JTA_ChatServer = new JTextArea("");
     JScrollPane JSP_ChatServer = new JScrollPane(JTA_ChatServer,
@@ -63,7 +63,7 @@ public class Server extends JFrame {
 			Dic_File_Error_Occured = true;
 			JTA_ChatServer.append(getTime() +  " 사전 파일을 불러오는데 실패하였습니다!\n");
 			JTA_ChatServer.append(getTime() +  " " + "사전 파일이 올바른 위치에 저장되어 있고"
-												+ " 파일명이 dictionary.txt 가 맞는지"
+												+ " 파일명이 \"dictionary.txt\" 가 맞는지"
 												+ " 확인하고 서버를 재실행 하여 주십시오." +"\n");
 			return;
 		}
@@ -138,8 +138,15 @@ public class Server extends JFrame {
 			public void windowDeactivated(WindowEvent e) {
 			}
 			
+			// TODO: Server closing
 			@Override
 			public void windowClosing(WindowEvent e) {
+				try {
+					if (serverSocket != null)
+						serverSocket.close();
+				} catch (IOException e1) {
+					System.exit(0);
+				}
 				System.exit(0);
 			}
 			
