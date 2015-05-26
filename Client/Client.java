@@ -12,6 +12,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -86,6 +87,8 @@ public class Client extends JFrame {
 	JPanel Startup_down = new JPanel(new GridLayout(3, 1));
 	JPanel finder_panel = new JPanel(new BorderLayout());
 	JButton find_button = new JButton("검색");
+	back_Panel commonlist_background_panel_up = new back_Panel();
+	back_Panel commonlist_background_panel_down = new back_Panel();
 	startup_BACKGROUND_Panel startup_panel = new startup_BACKGROUND_Panel();
 
 	JLabel Startup_Label = new JLabel("OpenDIC");
@@ -301,31 +304,7 @@ public class Client extends JFrame {
 			}
 		});
 		
-		button_start.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					chat_socket = new Socket(JTF_ip.getText(), 7777);
-				} catch (IOException e) {
-					JTF_ip.setText("서버에 연결할 수 없습니다!");
-				}
 
-				if (chat_socket != null) {
-					frame_startup.setVisible(false);
-					frame_main.setVisible(true);
-					
-					chat_name = JTF_name.getText();
-
-					ClientReceiver clientReceiver = new ClientReceiver(
-							chat_socket);
-					new ClientSender(chat_socket);
-
-					clientReceiver.start();
-				}
-
-				JTF_ip_input_counter = 0;
-				JTF_name_input_counter = 0;
-			}
-		});
 			
 		JTF_ip.setPreferredSize(new Dimension(220, 30));
 		JTF_name.setPreferredSize(new Dimension(220, 30));
@@ -345,7 +324,52 @@ public class Client extends JFrame {
 		login_panel.add(login_panel_1st, 0);
 		login_panel.add(login_panel_2st, 1);
 		login_panel.add(login_panel_3st, 2);
-		login_panel_button_area.add(button_start);
+
+		button_background_panel start_button_background = new button_background_panel();
+		login_panel_button_area.add(start_button_background);
+		
+		start_button_background.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				try {
+					chat_socket = new Socket(JTF_ip.getText(), 7777);
+				} catch (IOException arg0) {
+					JTF_ip.setText("서버에 연결할 수 없습니다!");
+				}
+
+				if (chat_socket != null) {
+					frame_startup.setVisible(false);
+					frame_main.setVisible(true);
+
+					chat_name = JTF_name.getText();
+
+					ClientReceiver clientReceiver = new ClientReceiver(
+							chat_socket);
+					new ClientSender(chat_socket);
+
+					clientReceiver.start();
+				}
+
+				JTF_ip_input_counter = 0;
+				JTF_name_input_counter = 0;
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
 
 		Startup_upper_2st.add(Startup_Label);
 		Startup_Label.setFont(startup_font);
@@ -510,10 +534,13 @@ public class Client extends JFrame {
 		
 		// TODO: wordlist 초기화
 		wordlist[0] = new JTextField("====== 유사 단어 ======");
-		wordlist[0].setFont(new Font("", Font.BOLD, 18));
+		wordlist[0].setFont(new Font("-구름L", Font.BOLD, 18));
 		wordlist[0].setHorizontalAlignment(JTextField.CENTER);
 		wordlist[0].setEditable(false);
-		sp_L_commonWordArea.add(wordlist[0]);
+		wordlist[0].setBorder(BorderFactory.createEmptyBorder());
+		wordlist[0].setOpaque(false);
+		commonlist_background_panel_down.add(wordlist[0]);
+		sp_L_commonWordArea.add(commonlist_background_panel_down);
 		
 		for (int i = 1; i < 10; i++) {
 			wordlist[i] = new JTextField("");
@@ -523,10 +550,15 @@ public class Client extends JFrame {
 		sp_L_commonWordArea.setBackground(new Color(255, 255, 255));
 		
 		wordlist_history[0] = new JTextField("====== 검색 기록 ======");
-		wordlist_history[0].setFont(new Font("", Font.BOLD, 18));
+		wordlist_history[0].setFont(new Font("-구름L",Font.CENTER_BASELINE ,18));
+		wordlist_history[0].setBackground(new Color(255, 255, 0));
 		wordlist_history[0].setHorizontalAlignment(JTextField.CENTER);
+		wordlist_history[0].setOpaque(false);
+		wordlist_history[0].setBorder(BorderFactory.createEmptyBorder());
 		wordlist_history[0].setEditable(false);
-		sp_L_WordHistoryArea.add(wordlist_history[0]);
+		
+		sp_L_WordHistoryArea.add(commonlist_background_panel_up);
+		commonlist_background_panel_up.add(wordlist_history[0]);
 		
 		for (int i = 1; i < 10; i++) {
 			wordlist_history[i] = new JTextField("");
@@ -635,16 +667,44 @@ public class Client extends JFrame {
 			setVisible(false);
 		}
 	}
+	
+	// 배경화면을 추가한 백패널
+	class back_Panel extends JPanel {
+		private static final long serialVersionUID = 1L;
+		private ImageIcon bkgImg = new ImageIcon("./worldlist_bg.png");
+
+		private Dimension d;
+
+		public void paintComponent(Graphics page) // 배경 이미지 그리기
+		{
+
+			super.paintComponent(page);
+			d = getSize();
+			page.drawImage(bkgImg.getImage(), 0, 0, d.width, d.height, null);
+		}
+
+	}
+
+	class button_background_panel extends JPanel {
+		private static final long serialVersionUID = 1L;
+		private ImageIcon bkgImg = new ImageIcon("./enter_bg.jpg");
+
+		private Dimension d;
+
+		public void paintComponent(Graphics page) // 배경 이미지 그리기
+		{
+
+			super.paintComponent(page);
+			d = getSize();
+			page.drawImage(bkgImg.getImage(), 0, 0, d.width, d.height, null);
+		}
+
+	}
 
 	// 배경화면을 추가한 패널
 	class startup_BACKGROUND_Panel extends JPanel {
 		private static final long serialVersionUID = 1L;
-		private ImageIcon bkgImg = new ImageIcon(
-				"./2.png");
-
-		/*
-		 * private ImageIcon bkgImg = new ImageIcon( "F:/picture/주니엘/ju2.jpg");
-		 */
+		private ImageIcon bkgImg = new ImageIcon("./2.png");
 
 		private Dimension d;
 
