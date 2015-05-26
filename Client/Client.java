@@ -401,9 +401,8 @@ public class Client extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
-				sp_R_updown.setDividerLocation(610);
-				is_ChatMode = false;
-				is_Wiki = false;
+				is_ChatMode = true;
+				Change_Mode();
 				
 				try {
 					File Dic_file = new File(Mywordlist_File);
@@ -443,7 +442,10 @@ public class Client extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {StringBuffer read = new StringBuffer("");
 
-				if ((!is_Wiki) && (!is_ChatMode)) {					
+				if ((!is_Wiki) && (!is_ChatMode)) {
+					is_ChatMode = true;
+					Change_Mode();
+					
 					try {
 
 						File Dic_file = new File(Mywordlist_File);
@@ -479,9 +481,9 @@ public class Client extends JFrame {
 					}
 
 				} else {
-					is_ChatMode = false;
-					is_Wiki = false;
-
+					is_ChatMode = true;
+					Change_Mode();
+					
 					sp_R_up_OpenDic_Show
 							.setText("저장하기: 해당 기능은 OpenDic 모드에서만 사용할수 있습니다. OpenDic모드로 전환 합니다.");
 					sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
@@ -1003,32 +1005,11 @@ public class Client extends JFrame {
 			wordlist_history[7].addMouseListener(new Wordlist_History_Handler(7));
 			wordlist_history[8].addMouseListener(new Wordlist_History_Handler(8));
 			wordlist_history[9].addMouseListener(new Wordlist_History_Handler(9));
-			
-			// 채팅/사전 전환
+						
 			file_chatmode.addActionListener(new ActionListener() {			
 				@Override
 				public void actionPerformed(ActionEvent arg0) {	
-					if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환						
-						is_ChatMode = false;
-						sp_R_updown.setDividerLocation(610);
-						file_chatmode.setText("채팅 모드 전환");
-						sp_R_down_Chat_Input.setEditable(false);
-						if (is_Wiki)
-							sp_R_updown.setLeftComponent(sp_R_up_Wiki_JSP);
-						else
-							sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
-						sp_R_down_Chat_Input.setText("사전 모드로 전환 되었습니다."
-									+ "이제부터 이 곳에는 프로그램 상태가 표시되며 대화를 입력 하실 수 없습니다.");
-					} else {	// 현재 모드가 사전 모드이며 채팅 모드로 전환						
-						is_ChatMode = true;
-						sp_R_updown.setDividerLocation(460);
-						file_chatmode.setText("사전 모드 전환");
-						sp_R_down_Chat_Input.setEditable(true);
-						sp_R_updown.setLeftComponent(sp_R_up_Chat_JSP);
-						sp_R_down_Chat_Input.setText("");
-						sp_R_up_Chat_Show.append("채팅 모드로 전환 되었습니다."
-										+ "이제부터 아래 대화창에 대화를 입력 하실 수 있습니다.\n");
-					}
+					Change_Mode();
 				}
 			});
 			
@@ -1041,6 +1022,31 @@ public class Client extends JFrame {
 					System.exit(0);
 				}
 			});
+		}
+	}
+	
+	// TODO: 채팅/사전 전환
+	void Change_Mode() {
+		if (is_ChatMode) {	// 현재 모드가 채팅 모드이며 사전 모드로 전환
+			is_ChatMode = false;
+			sp_R_updown.setDividerLocation(610);
+			file_chatmode.setText("채팅 모드 전환");
+			sp_R_down_Chat_Input.setEditable(false);
+			if (is_Wiki)
+				sp_R_updown.setLeftComponent(sp_R_up_Wiki_JSP);
+			else
+				sp_R_updown.setLeftComponent(sp_R_up_OpenDic_JSP);
+			sp_R_down_Chat_Input.setText("사전 모드로 전환 되었습니다."
+						+ "이제부터 이 곳에는 프로그램 상태가 표시되며 대화를 입력 하실 수 없습니다.");
+		} else {	// 현재 모드가 사전 모드이며 채팅 모드로 전환
+			is_ChatMode = true;
+			sp_R_updown.setDividerLocation(460);
+			file_chatmode.setText("사전 모드 전환");
+			sp_R_down_Chat_Input.setEditable(true);
+			sp_R_updown.setLeftComponent(sp_R_up_Chat_JSP);
+			sp_R_down_Chat_Input.setText("");
+			sp_R_up_Chat_Show.append("채팅 모드로 전환 되었습니다."
+							+ "이제부터 아래 대화창에 대화를 입력 하실 수 있습니다.\n");
 		}
 	}
 	
