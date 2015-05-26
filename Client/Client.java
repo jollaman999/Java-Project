@@ -38,7 +38,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.URISyntaxException;
@@ -143,7 +142,8 @@ public class Client extends JFrame {
 
 	static JFrame frame_main = new JFrame("OpenDIC v1.0");
 	
-
+	// Restart check
+	static Boolean is_restarted = false;
 
 	// 채팅 대화명, 채팅 소켓
 	private String chat_name;
@@ -177,8 +177,14 @@ public class Client extends JFrame {
 		login_panel_1st.setOpaque(false);
 		login_panel_2st.setOpaque(false);
 		login_panel_3st.setOpaque(false);
+
+		// TODO: Restart check
+		Restart_Checker();
+		if (is_restarted)
+			JTF_ip.setText("서버와의 연결이 끊어졌습니다!");
+		else
+			JTF_ip.setText("buf.jollaman999.com");
 		
-		JTF_ip.setText("buf.jollaman999.com");
 		JTF_name.setText("사용자명을 입력하세요");
 		
 		JTF_ip.addMouseListener(new MouseListener() {
@@ -1005,15 +1011,76 @@ public class Client extends JFrame {
 		System.exit(0);
 	}
 	
+	static void Restart_Writer() {
+		File Restart_WriteFile = new File("tmp.txt");
+
+		try {
+			Restart_WriteFile.createNewFile();
+		} catch (IOException e) {
+		}
+
+		FileWriter RestartCheckFileWriter = null;
+
+		try {
+			RestartCheckFileWriter = new FileWriter(Restart_WriteFile);
+		} catch (IOException e1) {
+		}
+
+		BufferedWriter Restart_WriteBufferedWriter = new BufferedWriter(
+				RestartCheckFileWriter);
+
+		try {
+			Restart_WriteBufferedWriter.write("1");
+		} catch (IOException e) {
+		}
+
+		try {
+			Restart_WriteBufferedWriter.close();
+		} catch (IOException e) {
+		}
+
+	}
+
+	static void Restart_Checker() {
+		String s_tmp = new String();
+
+		File Restart_CheckFile = new File("tmp.txt");
+
+		FileReader RestartCheckFileReader = null;
+
+		try {
+			RestartCheckFileReader = new FileReader(Restart_CheckFile);
+		} catch (IOException e1) {
+			return;
+		}
+
+		BufferedReader Restart_CheckBufferedReader = new BufferedReader(
+				RestartCheckFileReader);
+
+		try {
+			s_tmp = Restart_CheckBufferedReader.readLine();
+		} catch (IOException e) {
+		}
+
+		if (s_tmp.matches("1.*"))
+			is_restarted = true;
+
+		Restart_CheckFile.delete();
+		try {
+			Restart_CheckBufferedReader.close();
+		} catch (IOException e) {}
+	}
+	
 	static void Client_Disconnected() {		
 		frame_startup.setVisible(true);
 		frame_main.setVisible(false);
-		JTF_ip.setText("서버와의 연결이 끊어졌습니다!" + "\n");
+		JTF_ip.setText("서버와의 연결이 끊어졌습니다!");
 		try {
 			if (chat_socket != null)
 				chat_socket.close();
 		} catch (IOException e) {
 		}
+		Restart_Writer();
 		restartApplication_jar();
 	}
 	
