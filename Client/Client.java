@@ -640,7 +640,10 @@ public class Client extends JFrame {
 			} else { // TODO: 유사단어 스플릿
 				String read;
 				String[] reads;
+				String[] reads_enter;
 				String[] words;
+				
+				StringBuffer output = new StringBuffer("");
 
 				read = message;
 
@@ -651,7 +654,12 @@ public class Client extends JFrame {
 					return;
 
 				reads = read.split("@");
-				sp_R_up_OpenDic_Show.setText(reads[0]);
+				reads_enter = reads[0].split("=");
+				
+				for (int i = 0; i < reads_enter.length; i++)
+					output.append(reads_enter[i] + "\n");
+				
+				sp_R_up_OpenDic_Show.setText(output.toString());
 
 				words = reads[1].split("#");
 
