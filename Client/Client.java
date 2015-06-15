@@ -396,6 +396,8 @@ public class Client extends JFrame {
 		main_file.add(file_saveas);
 		main_file.add(file_exit);
 		
+		sp_R_up_OpenDic_Show.setEditable(false);
+		
 		// TODO: 저장/열기
 		file_open.addActionListener(new ActionListener() {
 			@Override
@@ -416,13 +418,14 @@ public class Client extends JFrame {
 						while ((tmps = Dic_bufferedreader.readLine()) != null) {
 							read.append(tmps);
 							read.append("\r\n");
-
 						}
 					} catch (IOException e1) {
 						sp_R_up_OpenDic_Show.setText("단어 리스트 파일을 읽어오는 중 문제가 발생하였습니다.\n"
 								+ "\"Mywordlist.txt\" 파일이 다른곳에서 사용중인지 확인하고 해당 기능을 재실행 해주십시오.");
+						return;
 					}
 					sp_R_up_OpenDic_Show.setText(read.toString());
+					sp_R_up_OpenDic_Show.setEditable(true);
 					try {
 						Dic_bufferedreader.close();
 						Dic_filereader.close();
@@ -870,7 +873,7 @@ public class Client extends JFrame {
 				}
 			});
 			
-			// Finder
+			// TODO: Finder
 			find_button.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
@@ -878,6 +881,7 @@ public class Client extends JFrame {
 					Dic_Word_Sender();
 					wordlist_history_allocator();
 					Finder.setText("");
+					sp_R_up_OpenDic_Show.setEditable(false);
 				}
 			});
 
@@ -897,6 +901,7 @@ public class Client extends JFrame {
 						Dic_Word_Sender();
 						wordlist_history_allocator();
 						Finder.setText("");
+						sp_R_up_OpenDic_Show.setEditable(false);
 					}
 				}
 			});
