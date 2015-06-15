@@ -1,6 +1,12 @@
 import java.awt.Color;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+
+import javax.swing.JFrame;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -8,9 +14,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
 import java.net.ServerSocket;
 import java.net.Socket;
+
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,11 +27,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import simmetrics.JaroWinkler;
  
