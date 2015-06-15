@@ -86,7 +86,7 @@ public class Server extends JFrame {
 										+ "[단어]/[뜻]	(구분자 : /)\n"
 										+ "수박/붉고 물이 많으며 달고 맛있음.\n"
 										+ "사과/속살이 노란빛이 돌며 달고 맛있음.\n"
-									    + "바나나/길고 달고 맛있음.");
+									    + "바나나/길고 달고 맛있음.\n");
 					Dic_File_Error_Occured = true;
 					Dic_bufferedreader.close();
 					return;
