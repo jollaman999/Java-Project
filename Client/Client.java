@@ -886,6 +886,9 @@ public class Client extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
 					msg = Finder.getText();
+					if (msg.equals(""))
+						return;
+					
 					Dic_Word_Sender();
 					wordlist_history_allocator();
 					Finder.setText("");
@@ -906,6 +909,9 @@ public class Client extends JFrame {
 				public void keyPressed(KeyEvent arg0) {
 					if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 						msg = Finder.getText();
+						if (msg.equals(""))
+							return;
+						
 						Dic_Word_Sender();
 						wordlist_history_allocator();
 						Finder.setText("");
@@ -951,6 +957,9 @@ public class Client extends JFrame {
 				@Override
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist[index].getText();
+					if (msg.equals(""))
+						return;
+					
 					Dic_Word_Sender();
 					wordlist_history_allocator();
 				}
@@ -985,6 +994,7 @@ public class Client extends JFrame {
 				public Wordlist_History_Handler (int i) {
 					this.index = i;
 				}
+				
 				@Override
 				public void mouseReleased(MouseEvent e) {
 				}
@@ -992,6 +1002,9 @@ public class Client extends JFrame {
 				@Override
 				public void mousePressed(MouseEvent e) {
 					msg = wordlist_history[index].getText();
+					if (msg.equals(""))
+						return;
+					
 					Dic_Word_Sender();
 					wordlist_history_allocator();
 				}
